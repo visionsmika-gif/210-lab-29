@@ -5,8 +5,17 @@
 // Define constants for the number of simulation days and the number of stores
 
 // displayStock() - Function to display store stock
-// takes a map of clothing stores, goes through each map element
-// outputs the name of the store (map key) and the clothing stores' tops, bottoms, and shoes (map value)
+// Arguments: a map of clothing stores
+// Goes through each map element, outputs the name of the store (map key) and the clothing stores' tops, bottoms, and shoes (map value)
+
+// restockClothing() - Function to add new clothing to a particular store
+// Arguments: a map of clothing stores, the name of the particular clothing store, the three vectors for tops, bottoms, and shoes
+// It has a chance of restocking a random number of tops, bottoms, and shoes
+// One category is guaranteed to be restocked each time
+
+// sellClothing() - Function to sell clothing from a particular store
+// Arguments - a map of clothing stores, the name of the particular clothing store
+// 
 
 // Define main function
 // Open external file 
@@ -26,7 +35,9 @@
 // For 25 time intervals:
 	// Iterate through each clothing store.
 		// For that particular clothing store, these events have a chance of happening:
-			// Event 1.1 - Tops get added
-			// Event 1.2 - Bottoms get added
-			// Event 1.3 - Shoes get added
-			// Event 2 - 
+		// Event 1 - Clothing gets restocked. (call restockClothing)
+		// Event 2 - Clothing gets sold. (call sellClothing)
+		// Event 3 - Clothing gets transferred between stores. (call transferClothing)
+		// Whenever one of these events happen, print the change, e.g. "3 tops were added to [Clothing Store Name]".
+	// Wait or pause briefly to simulate the passage of time between intervals
+// End of main function
