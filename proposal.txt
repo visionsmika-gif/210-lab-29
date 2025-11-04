@@ -1,0 +1,16 @@
+INSTRUCTIONS:
+Imagine the subject and details of your project, and write a proposal. Write this proposal in your GitHub repository in a file named proposal.txt.
+The proposal should describe the project and explain its implementation. Explain how the simulation will take place, and what it will show.
+Explain the time periods you've chosen.
+
+REQUIREMENTS:
+It needs to be a simulation.
+The simulation can be anything in life or nature.
+The simulation needs to be a discrete-event simulation (time-based).
+The simulation must feature an std::map.
+The simulation must retrieve data from an external file.
+The value in the map's key-value pair must be a 3-element std::array of std::lists. This makes a nested data structure, with the outer map hosting an inner array of three lists.
+There must be at least 100 lines of data processed by the program. LLM's are well-known for helping to generate data like this.
+The driver program should neatly display the std::map data.
+The driver should show the initial state of the environment, and how it changes after a certain number of time periods. Use at least 25 time periods.
+The program must have at least one function.
