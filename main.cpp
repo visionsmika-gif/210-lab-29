@@ -1,13 +1,32 @@
-/* INSTRUCTIONS:
+// Pseudocode comments and mockup:
 
-The pseudocode will be coded using VS Code connected to a GitHub repository.
+// Include headers for files, data structures, etc
 
-Pseudocode is plain-language comments, placed in your code as actual comments, that serve as a coding framework.
-What are the major steps and blocks of code necessary for the project? What functions? Put placeholders for all
-those with pseudocode comments.
+// Define constants for the number of simulation days and the number of stores
 
-Write a mockup, which is a bare-bones wireframe of your code. It should have dummy variables and do trivial
-outputs to demonstrate that the functions work, are passing data, and that the data structure is coded properly
-with one data element. */
+// displayStock() - Function to display store stock
+// takes a map of clothing stores, goes through each map element
+// outputs the name of the store (map key) and the clothing stores' tops, bottoms, and shoes (map value)
 
-// Pseudocode and mockup:
+// Define main function
+// Open external file 
+	// If the file does not open, print an error and exit
+	// Read at least 100 pieces of clothing from a file, extracting its data, and storing into three vectors (depending on if it's a top, bottom, or shoes)
+	// Close the file
+
+// Create a map of clothing stores
+// For each clothing store, go through each of its categories: tops, bottoms, shoes
+	// Add a random number of tops from the vector of tops
+	// Add a random number of bottoms from the vector of bottoms
+	// Add a random number of shoes from the vector of shoes
+
+// Before the time periods begin, call displayStock() to display the initial state of each store, showing their beginning stock
+
+// Begin a time-based simulation for clothing store changes:
+// For 25 time intervals:
+	// Iterate through each clothing store.
+		// For that particular clothing store, these events have a chance of happening:
+			// Event 1.1 - Tops get added
+			// Event 1.2 - Bottoms get added
+			// Event 1.3 - Shoes get added
+			// Event 2 - 
