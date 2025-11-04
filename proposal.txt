@@ -29,5 +29,9 @@ For example, one map entry is Bubbly Boutique. The key for this map entry is the
 of clothing: tops, bottoms, and shoes. There can be other map entries for other stores as well, such as "Casual Couture" and "Aesthetic Apparel."
 Both "Casual Couture" and "Aesthetic Apparel" sell their own tops, bottoms, and shoes.
 
-Events in the simulation include:
-* 
+The simulation will show each day of a 25-day time period.
+
+Each day, these events have a chance of happening:
+* A store restocks with new clothing. (New items are added to a store's tops, bottoms, or shoes.)
+* A store sells some of its clothing. (Items are removed from a store's tops, bottoms, or shoes.)
+* A store transfres some of its clothing to another store to be sold there instead. (Items are removed from one store and added to another.)
