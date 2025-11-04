@@ -1,27 +1,7 @@
-INSTRUCTIONS:
-Imagine the subject and details of your project, and write a proposal. Write this proposal in your GitHub repository in a file named proposal.txt.
-The proposal should describe the project and explain its implementation. Explain how the simulation will take place, and what it will show.
-Explain the time periods you've chosen.
+DESCRIPTION:
+My project will be a simulation of clothing stores. The purpose is to simulate daily changes to the stock of several different clothing stores.
 
-REQUIREMENTS:
-It needs to be a simulation.
-The simulation can be anything in life or nature.
-The simulation needs to be a discrete-event simulation (time-based).
-The simulation must feature an std::map.
-The simulation must retrieve data from an external file.
-The value in the map's key-value pair must be a 3-element std::array of std::lists. This makes a nested data structure, with the outer map hosting an inner array of three lists.
-There must be at least 100 lines of data processed by the program. LLM's are well-known for helping to generate data like this.
-The driver program should neatly display the std::map data.
-The driver should show the initial state of the environment, and how it changes after a certain number of time periods. Use at least 25 time periods.
-The program must have at least one function.
-
-
-
-SIMULATION:
-Clothing store
-
-My project will be a simulation of clothing stores. The purpose is to simulate daily changes to the clothing store's stock.
-
+IMPLEMENTATION:
 An std::map will store each clothing store. The map's key will be the name of the clothing store. A single value in the map is an array of three lists.
 The three lists represent different categories of clothing that the store sells: tops, bottoms, and shoes.
 
@@ -29,9 +9,13 @@ For example, one map entry is Bubbly Boutique. The key for this map entry is the
 of clothing: tops, bottoms, and shoes. There can be other map entries for other stores as well, such as "Casual Couture" and "Aesthetic Apparel."
 Both "Casual Couture" and "Aesthetic Apparel" sell their own tops, bottoms, and shoes.
 
-The simulation will show each day of a 25-day time period.
+Before the simulation begins, several clothing pieces will be read from a file and organized into three different vectors for tops, bottoms, and shoes.
+The stores will be initialized with some random number of tops, bottoms, and shoes taken from these vectors.
 
-Each day, these events have a chance of happening:
-* A store restocks with new clothing. (New items are added to a store's tops, bottoms, or shoes.)
-* A store sells some of its clothing. (Items are removed from a store's tops, bottoms, or shoes.)
-* A store transfres some of its clothing to another store to be sold there instead. (Items are removed from one store and added to another.)
+The simulation will show each day of a 25-day time period. Each day, these three events have a chance of happening:
+1 - A store restocks with new clothing. (New items are added to a store's tops, bottoms, or shoes.)
+2 - A store sells some of its clothing. (Items are removed from a store's tops, bottoms, or shoes.)
+3 - A store transfers some of its clothing to another store to be sold there instead. (Items are removed from one store and added to another.)
+
+When one of these events happen, an output will be displayed (e.g. RESTOCK EVENT: "3 tops were added to [Clothing Store Name]".
+At the end of one day, each store's stock will be displayed to show the result of all the events of that day.
