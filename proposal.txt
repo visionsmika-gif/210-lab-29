@@ -14,3 +14,20 @@ There must be at least 100 lines of data processed by the program. LLM's are wel
 The driver program should neatly display the std::map data.
 The driver should show the initial state of the environment, and how it changes after a certain number of time periods. Use at least 25 time periods.
 The program must have at least one function.
+
+
+
+SIMULATION:
+Clothing store
+
+My project will be a simulation of clothing stores. The purpose is to simulate daily changes to the clothing store's stock.
+
+An std::map will store each clothing store. The map's key will be the name of the clothing store. A single value in the map is an array of three lists.
+The three lists represent different categories of clothing that the store sells: tops, bottoms, and shoes.
+
+For example, one map entry is Bubbly Boutique. The key for this map entry is the name "Bubbly Boutique." Bubbly Boutique has three categories
+of clothing: tops, bottoms, and shoes. There can be other map entries for other stores as well, such as "Casual Couture" and "Aesthetic Apparel."
+Both "Casual Couture" and "Aesthetic Apparel" sell their own tops, bottoms, and shoes.
+
+Events in the simulation include:
+* 
