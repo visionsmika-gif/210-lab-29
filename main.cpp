@@ -52,12 +52,12 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 // Arguments: a map of clothing stores, the name of the particular clothing store, the three vectors for tops, bottoms, and shoes.
 // One random category (tops, bottoms, shoes) is selected and guaranteed to be restocked with a random number of clothes
 // The other categories have a chance to be restocked
-void restockClothing(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName,
+void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName,
 					const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
 	
 	// Choose a random category guaranteed to be added to.
 	int categoryIndex = rand() % 3;
-	string chosenCategory = categoryNames[randomCategory];
+	string chosenCategory = categoryNames[categoryIndex];
 
 	// Choose a random number of clothes to add to that category.
 	const int MIN = 3;
@@ -67,7 +67,9 @@ void restockClothing(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& c
 	// Add clothes to that category.
 	randomNum = MIN + (rand() % (MAX - MIN + 1));
 	for (int i = 0; i < randomNum; ++i) {
-		clothingStores[storeName][chosenCategory].push_back(clothingPool[categoryIndex].at(0));
+		const auto& store = clothingStores[storeName];
+
+		store[categoryIndex].push_back(clothingPool[categoryIndex].at(0));
 
 
 
