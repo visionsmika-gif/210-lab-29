@@ -51,27 +51,29 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 
 // restockClothing() - Function to add new clothing to a particular store
 // Arguments: a map of clothing stores, the name of the particular clothing store, the three vectors for tops, bottoms, and shoes.
-// One random category (tops, bottoms, shoes) is selected and guaranteed to be restocked with a random number of clothes
-// The other categories have a chance to be restocked
+// One random category (tops, bottoms, shoes) is selected restocked with a random number of clothes
 void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName,
 					const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
 	
-	cout << "Restocking clothing\n";
-
-	// Choose a random category guaranteed to be added to.
+	// Choose a random category to be added to.
 	int categoryIndex = rand() % 3;
-	string chosenCategory = categoryNames[categoryIndex];
+
 
 	// Choose a random number of clothes to add to that category.
 	const int MIN = 1;
 	const int MAX = 3;
 	int randomNum;	// Random number between 1-3
 
+	cout << randomNum << " " << categoryNames[categoryIndex] << " have been restocked\n";
+
+
 	// Add clothes to that category.
 	randomNum = MIN + (rand() % (MAX - MIN + 1));
 	for (int i = 0; i < randomNum; ++i) {
 		auto& store = clothingStores[storeName];							// access particular store
 		store[categoryIndex].push_back(clothingPool[categoryIndex].at(0));	// access particular store's category and add a new element
+		// In the real code, a random index for a random clothing piece in clothingPool would be chosen,
+		// but for simplicity in this mockup example, the index is just 0.
 	}
 }
 
@@ -80,6 +82,27 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 // Arguments - a map of clothing stores, the name of the particular clothing store.
 // One random category (tops, bottoms, shoes) is selected and guaranteed to sell a random number of clothes
 // The other categories have a chance to sell
+void sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
+	// Choose a random category to sell from.
+	int categoryIndex = rand() % 3;
+
+	// Choose a random number of clothes to add to that category.
+	const int MIN = 1;
+	const int MAX = 3;
+	int randomNum;	// Random number between 1-3
+
+	cout << randomNum << " " << categoryNames[categoryIndex] << " have been sold\n";
+
+	// Add clothes to that category.
+	randomNum = MIN + (rand() % (MAX - MIN + 1));
+	for (int i = 0; i < randomNum; ++i) {
+		auto& store = clothingStores[storeName];							// access particular store
+		store[categoryIndex].push_back(clothingPool[categoryIndex].at(0));	// access particular store's category and add a new element
+		// In the real code, a random index for a random clothing piece in clothingPool would be chosen,
+		// but for simplicity in this mockup example, the index is just 0.
+	}
+}
+
 
 // transferClothing() - Function to transfer clothing between two stores
 // Arguments - a map of clothing stores, the name of the particular clothing store
@@ -152,9 +175,11 @@ int main() {
 	cout << "Now beginning time intervals.\n";
 	// For 25 time intervals:
 	for (int i = 0; i < NUM_DAYS; ++i) {
-		cout << "--- DAY " << i << " ---\n";
+		cout << "\n--- DAY " << i << " ---\n";
 		// Iterate through each clothing store.
 		for (const auto& store : clothingStores) {
+			bool somethingHappened = false;
+
 			cout << "At " << store.first << ":\n";
 
 			int probability;
@@ -163,22 +188,28 @@ int main() {
 			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
 			probability = rand() % 100 + 1;
 			// restockClothing(clothingStores, store.first);
-
 			if (probability <= 60) {
 				restockClothing(clothingStores, store.first, clothingPool);
+				somethingHappened = true;
 			}
 
-			// Event 2 (60% cnance) - Clothing gets sold. (call sellClothing)
+			// Event 2 (70% cnance) - Clothing gets sold. (call sellClothing)
 			probability = rand() % 100 + 1;
+			if (probability <= 70) {
+				
+			}
 
 			// sellClothing(clothingStores, store.first);
 
 			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
 			probability = rand() % 60 + 1;
 
-
+			if (!somethingHappened) {
+				cout << "Nothing happened.\n";
+			}
 			// Whenever one of these events happen, print the change, e.g. "3 tops were added to [Clothing Store Name]".
 
+			cout << "\n";
 		}
 		// Wait or pause briefly to simulate the passage of time between intervals
 		displayStock(clothingStores);
