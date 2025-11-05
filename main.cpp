@@ -27,7 +27,7 @@ struct Clothing {
 void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 	cout << "Called displayStock()\n";
 	for (const auto& store : clothingStores) {
-		cout << store.first << "\n";
+		cout << "Now displaying stock for " << store.first << ":\n";
 		cout << "Stock for this store gets outputted.\n";
 	}
 }
@@ -56,23 +56,25 @@ int main() {
 	vector<Clothing> topsPool, bottomsPool, shoesPool;
 		// If the file does not open, print an error and exit
 		// Read at least 100 pieces of clothing from a file, extracting its data, and storing into three vectors (depending on if it's a top, bottom, or shoes)
-		// Close the file
-		cout << "Reading file into topsPool, bottomsPool, shoesPool";
+		cout << "Reading file into vectors topsPool, bottomsPool, shoesPool.\n";
 		// Here are some mockup examples of clothing pieces that may be read from the file:
 		topsPool.push_back(Clothing("Striped Blouse", "Top"));
 		bottomsPool.push_back(Clothing("Black Slacks", "Bottoms"));
 		shoesPool.push_back(Clothing("Knee-high Boots", "Shoes"));
+		// Close the file
+		cout << "Closing file.\n\n";
 
 	// Create a map of clothing stores
 	// The map's key is the clothing store name (string)
 	// The map's value is an array of 3 lists for tops, bottoms, and shoes
 	map<string, array<list<Clothing>, 3>> clothingStores;
+	clothingStores["Bubbly Boutique"];
 
 	// For each clothing store, go through each of its categories: tops, bottoms, shoes
 	cout << "Initializing clothingStores with values from topsPool, bottomsPool, and shoesPool.\n";
-	for (const auto& store : clothingStores) {
+	for (auto& store : clothingStores) {
 		// Output store name
-		cout << store.first << "\n";
+		cout << "Initializing " << store.first << ":\n";
 
 		const int MAX = 5;
 		const int MIN = 3;
@@ -82,6 +84,7 @@ int main() {
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
 			cout << "Adding top.\n";
+			store.second[0].push_back(topsPool.at(0)));
 		}
 
 		// Add a random number of bottoms from the vector of bottoms
@@ -95,6 +98,7 @@ int main() {
 		for (int i = 0; i < randomNum; ++i) {
 			cout << "Adding bottom.\n";
 		}
+		cout << "\n";
 	}
 
 	// Before the time periods begin, call displayStock() to display the initial state of each store, showing their beginning stock
