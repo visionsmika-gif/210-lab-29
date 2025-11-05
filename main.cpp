@@ -14,6 +14,7 @@ using namespace std;
 
 // Define constants for the number of simulation days, the number of stores, the name of each store, the name of each clothing category (top, bottom, or shoes)
 enum ClothingCategories { TOPS, BOTTOMS, SHOES };
+string categoryNames[] = { "Tops", "Bottoms", "Shoes"};
 const int NUM_DAYS = 25;
 
 
@@ -51,7 +52,40 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 // One random category (tops, bottoms, shoes) is selected and guaranteed to be restocked with a random number of clothes
 // The other categories have a chance to be restocked
 void restockClothing(const map<string, array<list<Clothing>, 3>>& clothingStores, const string& storeName) {
-	cout << storeName << " gets its clothing restocked.\n";
+	
+	// Choose a random category to add to.
+	int randomIndex = rand() % 3;
+	string randomCategory = categoryNames[randomIndex];
+
+	// Choose a random number of clothes to add to that category.
+	const int MIN = 3;
+	const int MAX = 5;
+	int randomNum;	// Random number between 3-5
+
+	// Add clothes to that category.
+	for (int i = 0; i < randomNum; ++i) {
+		clothingStores[storeName][randomCategory].push_back();
+	}
+
+	clothingStores[storeName][randomCategory].
+
+
+
+		for (auto& store : clothingStores) {
+			// Output store name
+			cout << "Initializing " << store.first << ":\n";
+
+			const int MAX = 5;
+			const int MIN = 3;
+			int randomNum;	// Random number between 3-5
+
+			// Add a random number of tops from the vector of tops
+			randomNum = MIN + (rand() % (MAX - MIN + 1));
+			for (int i = 0; i < randomNum; ++i) {
+				cout << "Adding tops.\n";
+				store.second[TOPS].push_back(topsPool.at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
+				// but for simplicity in this mockup example, the index is just 0.
+			}
 }
 
 
@@ -143,9 +177,11 @@ int main() {
 			restockClothing(clothingStores, store.first);
 			// Event 2 (60% cnance) - Clothing gets sold. (call sellClothing)
 			probability = rand() % 60 + 1;
+			sellClothing(clothingStores, store.first);
 
 			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
 			probability = rand() % 60 + 1;
+
 
 			// Whenever one of these events happen, print the change, e.g. "3 tops were added to [Clothing Store Name]".
 		}
