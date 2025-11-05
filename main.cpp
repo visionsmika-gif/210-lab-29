@@ -51,11 +51,11 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 // Arguments: a map of clothing stores, the name of the particular clothing store, the three vectors for tops, bottoms, and shoes.
 // One random category (tops, bottoms, shoes) is selected and guaranteed to be restocked with a random number of clothes
 // The other categories have a chance to be restocked
-void restockClothing(const map<string, array<list<Clothing>, 3>>& clothingStores, const string& storeName) {
+void restockClothing(const map<string, array<list<Clothing>, 3>>& clothingStores, const string& storeName,
+					const vector<Clothing>& clothingPool);
 	
-	// Choose a random category to add to.
-	int randomIndex = rand() % 3;
-	string randomCategory = categoryNames[randomIndex];
+	// Choose a random category guaranteed to be added to.
+	int randomCategory = rand() % 3;
 
 	// Choose a random number of clothes to add to that category.
 	const int MIN = 3;
@@ -105,14 +105,15 @@ int main() {
 
 	// Open external file 
 	cout << "Opening file...\n";
-	vector<Clothing> topsPool, bottomsPool, shoesPool;
+	array<vector<Clothing>, 3> clothingPool;
+
 		// If the file does not open, print an error and exit
 		// Read at least 100 pieces of clothing from a file, extracting its data, and storing into three vectors (depending on if it's a top, bottom, or shoes)
 		cout << "Reading file into vectors topsPool, bottomsPool, shoesPool.\n";
 		// Here are some mockup examples of clothing pieces that may be read from the file:
-		topsPool.push_back(Clothing("Striped Blouse", "Tops"));
-		bottomsPool.push_back(Clothing("Black Slacks", "Bottoms"));
-		shoesPool.push_back(Clothing("Knee-high Boots", "Shoes"));
+		clothingPool[TOPS].push_back(Clothing("Striped Blouse", "Tops"));
+		clothingPool[BOTTOMS].push_back(Clothing("Black Slacks", "Bottoms"));
+		clothingPool[SHOES].push_back(Clothing("Knee-high Boots", "Shoes"));
 		// Close the file
 		cout << "Closing file.\n\n";
 
@@ -175,6 +176,13 @@ int main() {
 			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
 			probability = rand() % 60 + 1;
 			restockClothing(clothingStores, store.first);
+
+			if (probability <= 60) {
+
+				
+			}
+
+
 			// Event 2 (60% cnance) - Clothing gets sold. (call sellClothing)
 			probability = rand() % 60 + 1;
 			sellClothing(clothingStores, store.first);
