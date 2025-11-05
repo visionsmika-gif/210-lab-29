@@ -7,6 +7,8 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <ctime>	// for seed
+#include <cstdlib>	// for RNG
 
 using namespace std;
 
@@ -40,17 +42,19 @@ struct Clothing {
 
 // Define main function
 int main() {
+	srand(time(0));
+
 	// Open external file 
+	cout << "Opening file...\n";
+	vector<Clothing> topsPool, bottomsPool, shoesPool;
 		// If the file does not open, print an error and exit
 		// Read at least 100 pieces of clothing from a file, extracting its data, and storing into three vectors (depending on if it's a top, bottom, or shoes)
 		// Close the file
-	cout << "Reading file into topsPool, bottomsPool, shoesPool";
-	vector<Clothing> topsPool, bottomsPool, shoesPool;
-	topsPool.push_back(Clothing("", "Top"));
-	bottomsPool.push_back(Clothing(""), "Bottoms");
-
-
-
+		cout << "Reading file into topsPool, bottomsPool, shoesPool";
+		// Here are some mockup examples of clothing pieces that may be read from the file:
+		topsPool.push_back(Clothing("Striped Blouse", "Top"));
+		bottomsPool.push_back(Clothing("Black Slacks", "Bottoms"));
+		shoesPool.push_back(Clothing("Knee-high Boots", "Shoes"));
 
 	// Create a map of clothing stores
 	// The map's key is the clothing store name (string)
@@ -60,6 +64,10 @@ int main() {
 	// For each clothing store, go through each of its categories: tops, bottoms, shoes
 	cout << "Initializing clothingStores with values from topsPool, bottomsPool, and shoesPool.";
 	for (int i = 0; i < clothingStores.size(); ++i) {
+		const int RANGE = 3;
+		const int MIN = 3;
+		int numClothing = rand() % 3
+
 		// Add a random number of tops from the vector of tops
 		// Add a random number of bottoms from the vector of bottoms
 		// Add a random number of shoes from the vector of shoes
