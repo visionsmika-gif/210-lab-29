@@ -36,10 +36,9 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 		cout << "Now displaying stock for " << store.first << ":\n";
 
 		// For every clothing category (tops, bottoms, shoes)
-		for (const auto& category : store.second) {
-			// Output category name
-			cout << category.front().category << ": ";
-			// Output all the clothing items in that category.
+		for (int i = 0; i < NUM_CATEGORIES; ++i) {
+			const auto& category = store.second[i];	// get list for current category
+			cout << categoryNames[i] << ": ";
 			for (const auto& clothingPiece : category) {
 				cout << clothingPiece.name << ", ";
 			}
@@ -117,6 +116,22 @@ void sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 // Arguments - a map of clothing stores, the name of the particular clothing store
 // A random other store is chosen to be transferred to
 // A random piece of clothing from a random category is taken from the parameter store and added to the other store
+void transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
+	int itOffset = rand() % clothingStores.size();	// select a random clothing store
+
+	// In the real code, more advanced logic will be added to transferClothing().
+	// However, since the mockup only has 1 clothing store, transferClothing() has not yet had all its logic implemented
+	// (because a clothign store can't transfer to itself)
+	
+	// TODO: Ensure that a clothing store does not select itself as the store to transfer to.
+	auto it = clothingStores.begin();
+	advance(it, itOffset);
+
+	if (it != clothingStores.end()) {
+		cout << storeName << " transfers clothing to " << it->first << "\n";
+	}
+}
+
 
 // Define main function
 int main() {
@@ -148,8 +163,8 @@ int main() {
 		// Output store name
 		cout << "Initializing " << store.first << ":\n";
 
-		const int MAX = 1;
-		const int MIN = 3;
+		const int MAX = 3;
+		const int MIN = 1;
 		int randomNum;	// Random number between 1-3
 
 		// Add a random number of tops from the vector of tops
@@ -183,7 +198,7 @@ int main() {
 	// Begin a time-based simulation for clothing store changes:
 	cout << "Now beginning time intervals.\n";
 	// For 25 time intervals:
-	for (int i = 0; i < NUM_DAYS; ++i) {
+	for (int i = 0; i <= NUM_DAYS; ++i) {
 		cout << "\n--- DAY " << i << " ---\n";
 		// Iterate through each clothing store.
 		for (const auto& store : clothingStores) {
@@ -212,7 +227,10 @@ int main() {
 			// sellClothing(clothingStores, store.first);
 
 			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
-			probability = rand() % 60 + 1;
+			probability = rand() % 100 + 1;
+			if (probability <= 20) {
+				transferClothing(clothingStores, store.first);
+			}
 
 			if (!somethingHappened) {
 				cout << "Nothing happened.\n";
@@ -221,8 +239,11 @@ int main() {
 
 			cout << "\n";
 		}
-		// Wait or pause briefly to simulate the passage of time between intervals
+		// Display stock by the end of the day
 		displayStock(clothingStores);
+
+		// Wait or pause briefly to simulate the passage of time between intervals
+
 	// End of main function
 	}
 
