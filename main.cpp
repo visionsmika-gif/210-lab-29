@@ -14,9 +14,9 @@ using namespace std;
 
 // Define constants for the number of simulation days, the number of stores, the name of each store, the name of each clothing category (top, bottom, or shoes)
 enum ClothingCategories { TOPS, BOTTOMS, SHOES };
-string categoryNames[] = { "Tops", "Bottoms", "Shoes"};
+const int NUM_CATEGORIES = 3;
+string categoryNames[NUM_CATEGORIES] = { "Tops", "Bottoms", "Shoes"};
 const int NUM_DAYS = 25;
-
 
 // Define a struct for a single clothing piece, containing the clothing piece's name and category (top, bottom, or shoes)
 struct Clothing {
@@ -45,17 +45,19 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 			}
 		}
 	}
+	cout << "End of displayStock()\n";
 }
 
 // restockClothing() - Function to add new clothing to a particular store
 // Arguments: a map of clothing stores, the name of the particular clothing store, the three vectors for tops, bottoms, and shoes.
 // One random category (tops, bottoms, shoes) is selected and guaranteed to be restocked with a random number of clothes
 // The other categories have a chance to be restocked
-/*void restockClothing(const map<string, array<list<Clothing>, 3>>& clothingStores, const string& storeName,
-					const vector<Clothing>& clothingPool) {
+void restockClothing(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName,
+					const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
 	
 	// Choose a random category guaranteed to be added to.
-	int randomCategory = rand() % 3;
+	int categoryIndex = rand() % 3;
+	string chosenCategory = categoryNames[randomCategory];
 
 	// Choose a random number of clothes to add to that category.
 	const int MIN = 3;
@@ -63,13 +65,19 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 	int randomNum;	// Random number between 3-5
 
 	// Add clothes to that category.
+	randomNum = MIN + (rand() % (MAX - MIN + 1));
 	for (int i = 0; i < randomNum; ++i) {
-		clothingStores[storeName][randomCategory].push_back();
+		clothingStores[storeName][chosenCategory].push_back(clothingPool[categoryIndex].at(0));
+
+
+
+		store.second[TOPS].push_back(clothingPool[TOPS].at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
+
 	}
 
 	// clothingStores[storeName][randomCategory].
 
-}*/
+}
 
 
 // sellClothing() - Function to sell clothing from a particular store
@@ -103,7 +111,7 @@ int main() {
 	// Create a map of clothing stores
 	// The map's key is the clothing store name (string)
 	// The map's value is an array of 3 lists for tops, bottoms, and shoes
-	map<string, array<list<Clothing>, 3>> clothingStores;
+	map<string, array<list<Clothing>, NUM_CATEGORIES>> clothingStores;
 	clothingStores["Bubbly Boutique"];
 
 	// For each clothing store, go through each of its categories: tops, bottoms, shoes
@@ -121,7 +129,7 @@ int main() {
 		for (int i = 0; i < randomNum; ++i) {
 			cout << "Adding tops.\n";
 			store.second[TOPS].push_back(clothingPool[TOPS].at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
-															// but for simplicity in this mockup example, the index is just 0.
+																	// but for simplicity in this mockup example, the index is just 0.
 		}
 
 		// Add a random number of bottoms from the vector of bottoms
@@ -158,11 +166,10 @@ int main() {
 			// For that particular clothing store, these events have a chance of happening:
 			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
 			probability = rand() % 60 + 1;
-			restockClothing(clothingStores, store.first);
+			// restockClothing(clothingStores, store.first);
 
 			if (probability <= 60) {
-
-				
+				restockClothing(clothingStores, store.first, clothingPool);
 			}
 
 
