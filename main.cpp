@@ -38,11 +38,12 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 		// For every clothing category (tops, bottoms, shoes)
 		for (const auto& category : store.second) {
 			// Output category name
-			cout << category.front().category << "\n";
+			cout << category.front().category << ": ";
 			// Output all the clothing items in that category.
 			for (const auto& clothingPiece : category) {
-				cout << clothingPiece.name << "\n";
+				cout << clothingPiece.name << ", ";
 			}
+			cout << "\n";
 		}
 	}
 	cout << "End of displayStock()\n";
@@ -55,30 +56,23 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName,
 					const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
 	
+	cout << "Restocking clothing\n";
+
 	// Choose a random category guaranteed to be added to.
 	int categoryIndex = rand() % 3;
 	string chosenCategory = categoryNames[categoryIndex];
 
 	// Choose a random number of clothes to add to that category.
-	const int MIN = 3;
-	const int MAX = 5;
-	int randomNum;	// Random number between 3-5
+	const int MIN = 1;
+	const int MAX = 3;
+	int randomNum;	// Random number between 1-3
 
 	// Add clothes to that category.
 	randomNum = MIN + (rand() % (MAX - MIN + 1));
 	for (int i = 0; i < randomNum; ++i) {
-		const auto& store = clothingStores[storeName];
-
-		store[categoryIndex].push_back(clothingPool[categoryIndex].at(0));
-
-
-
-		store.second[TOPS].push_back(clothingPool[TOPS].at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
-
+		auto& store = clothingStores[storeName];							// access particular store
+		store[categoryIndex].push_back(clothingPool[categoryIndex].at(0));	// access particular store's category and add a new element
 	}
-
-	// clothingStores[storeName][randomCategory].
-
 }
 
 
@@ -122,9 +116,9 @@ int main() {
 		// Output store name
 		cout << "Initializing " << store.first << ":\n";
 
-		const int MAX = 5;
+		const int MAX = 1;
 		const int MIN = 3;
-		int randomNum;	// Random number between 3-5
+		int randomNum;	// Random number between 1-3
 
 		// Add a random number of tops from the vector of tops
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
@@ -167,16 +161,16 @@ int main() {
 
 			// For that particular clothing store, these events have a chance of happening:
 			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
-			probability = rand() % 60 + 1;
+			probability = rand() % 100 + 1;
 			// restockClothing(clothingStores, store.first);
 
 			if (probability <= 60) {
 				restockClothing(clothingStores, store.first, clothingPool);
 			}
 
-
 			// Event 2 (60% cnance) - Clothing gets sold. (call sellClothing)
-			probability = rand() % 60 + 1;
+			probability = rand() % 100 + 1;
+
 			// sellClothing(clothingStores, store.first);
 
 			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
@@ -184,8 +178,10 @@ int main() {
 
 
 			// Whenever one of these events happen, print the change, e.g. "3 tops were added to [Clothing Store Name]".
+
 		}
 		// Wait or pause briefly to simulate the passage of time between intervals
+		displayStock(clothingStores);
 	// End of main function
 	}
 
