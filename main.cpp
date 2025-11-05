@@ -13,6 +13,8 @@
 using namespace std;
 
 // Define constants for the number of simulation days, the number of stores, the name of each store, the name of each clothing category (top, bottom, or shoes)
+enum ClothingCategories { TOP, BOTTOMS, SHOES };
+
 
 // Define a struct for a single clothing piece, containing the clothing piece's name and category (top, bottom, or shoes)
 struct Clothing {
@@ -26,9 +28,19 @@ struct Clothing {
 // Goes through each map element, outputs the name of the store (map key) and the clothing stores' tops, bottoms, and shoes (map value)
 void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 	cout << "Called displayStock()\n";
+
+	// For every store,
 	for (const auto& store : clothingStores) {
 		cout << "Now displaying stock for " << store.first << ":\n";
-		cout << "Stock for this store gets outputted.\n";
+
+		// For every clothing category (tops, bottoms, shoes)
+		for (const auto& category : store.second) {
+			cout << category.front().category << "\n";
+			// Output all the clothing items in that category.
+			for (const auto& clothingPiece : category) {
+				cout << clothingPiece.name << "\n";
+			}
+		}
 	}
 }
 
@@ -84,19 +96,22 @@ int main() {
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
 			cout << "Adding top.\n";
-			store.second[0].push_back(topsPool.at(0)));
+			store.second[TOP].push_back(topsPool.at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
+															// but for simplicity in this mockup example, the index is just 0.
 		}
 
 		// Add a random number of bottoms from the vector of bottoms
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
 			cout << "Adding bottom.\n";
+			store.second[BOTTOMS].push_back(bottomsPool.at(0));
 		}
 
 		// Add a random number of shoes from the vector of shoes
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
 			cout << "Adding bottom.\n";
+			store.second[SHOES].push_back(shoesPool.at(0));
 		}
 		cout << "\n";
 	}
