@@ -62,13 +62,12 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 	// Choose a random number of clothes to add to that category.
 	const int MIN = 1;
 	const int MAX = 3;
-	int randomNum;	// Random number between 1-3
+	int randomNum = MIN + (rand() % (MAX - MIN + 1));	// Random number between 1-3
 
 	cout << randomNum << " " << categoryNames[categoryIndex] << " have been restocked\n";
 
 
 	// Add clothes to that category.
-	randomNum = MIN + (rand() % (MAX - MIN + 1));
 	for (int i = 0; i < randomNum; ++i) {
 		auto& store = clothingStores[storeName];							// access particular store
 		store[categoryIndex].push_back(clothingPool[categoryIndex].at(0));	// access particular store's category and add a new element
@@ -83,23 +82,34 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 // One random category (tops, bottoms, shoes) is selected and guaranteed to sell a random number of clothes
 // The other categories have a chance to sell
 void sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
+
 	// Choose a random category to sell from.
 	int categoryIndex = rand() % 3;
 
-	// Choose a random number of clothes to add to that category.
+	// Return if that category is empty (can't sell if there's nothing)
+	auto& store = clothingStores[storeName];
+	if (store[categoryIndex].empty()) {
+		return;
+	}
+
+	// Choose a random number of clothes to sell from category.
 	const int MIN = 1;
 	const int MAX = 3;
-	int randomNum;	// Random number between 1-3
+	int randomNum = MIN + (rand() % (MAX - MIN + 1));	// Random number between 1-3
+
+	// Ensure we don't sell more clothes than we have
+	while (randomNum > store[categoryIndex].size()) {
+		randomNum = MIN + (rand() % (MAX - MIN + 1));
+	}
 
 	cout << randomNum << " " << categoryNames[categoryIndex] << " have been sold\n";
 
-	// Add clothes to that category.
-	randomNum = MIN + (rand() % (MAX - MIN + 1));
+	// Sell clothes from that category.
 	for (int i = 0; i < randomNum; ++i) {
-		auto& store = clothingStores[storeName];							// access particular store
-		store[categoryIndex].push_back(clothingPool[categoryIndex].at(0));	// access particular store's category and add a new element
-		// In the real code, a random index for a random clothing piece in clothingPool would be chosen,
-		// but for simplicity in this mockup example, the index is just 0.
+		
+		store[categoryIndex].pop_front();	// access particular store's category and remove an element
+		// In the real code, a random piece of clothing would be sold,
+		// but for simplicity in this mockup example, the front of the category is just sold.
 	}
 }
 
@@ -196,7 +206,8 @@ int main() {
 			// Event 2 (70% cnance) - Clothing gets sold. (call sellClothing)
 			probability = rand() % 100 + 1;
 			if (probability <= 70) {
-				
+				sellClothing(clothingStores, store.first);
+				somethingHappened = true;
 			}
 
 			// sellClothing(clothingStores, store.first);
