@@ -58,7 +58,6 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 	// Choose a random category to be added to.
 	int categoryIndex = rand() % 3;
 
-
 	// Choose a random number of clothes to add to that category.
 	const int MIN = 1;
 	const int MAX = 3;
@@ -106,10 +105,10 @@ void sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 
 	// Sell clothes from that category.
 	for (int i = 0; i < randomNum; ++i) {
-		
-		store[categoryIndex].pop_front();	// access particular store's category and remove an element
+		store[categoryIndex].pop_front();	// access particular store's category and remove an element		
 		// In the real code, a random piece of clothing would be sold,
 		// but for simplicity in this mockup example, the front of the category is just sold.
+
 	}
 }
 
