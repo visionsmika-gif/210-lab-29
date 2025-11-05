@@ -24,6 +24,13 @@ struct Clothing {
 // displayStock() - Function to display store stock
 // Arguments: a map of clothing stores.
 // Goes through each map element, outputs the name of the store (map key) and the clothing stores' tops, bottoms, and shoes (map value)
+void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
+	cout << "Called displayStock()\n";
+	for (const auto& store : clothingStores) {
+		cout << store.first << "\n";
+		cout << "Stock for this store gets outputted.\n";
+	}
+}
 
 // restockClothing() - Function to add new clothing to a particular store
 // Arguments: a map of clothing stores, the name of the particular clothing store, the three vectors for tops, bottoms, and shoes.
@@ -62,15 +69,32 @@ int main() {
 	map<string, array<list<Clothing>, 3>> clothingStores;
 
 	// For each clothing store, go through each of its categories: tops, bottoms, shoes
-	cout << "Initializing clothingStores with values from topsPool, bottomsPool, and shoesPool.";
-	for (int i = 0; i < clothingStores.size(); ++i) {
-		const int RANGE = 3;
+	cout << "Initializing clothingStores with values from topsPool, bottomsPool, and shoesPool.\n";
+	for (const auto& store : clothingStores) {
+		// Output store name
+		cout << store.first << "\n";
+
+		const int MAX = 5;
 		const int MIN = 3;
-		int numClothing = rand() % 3
+		int randomNum;	// Random number between 3-5
 
 		// Add a random number of tops from the vector of tops
+		randomNum = MIN + (rand() % (MAX - MIN + 1));
+		for (int i = 0; i < randomNum; ++i) {
+			cout << "Adding top.\n";
+		}
+
 		// Add a random number of bottoms from the vector of bottoms
+		randomNum = MIN + (rand() % (MAX - MIN + 1));
+		for (int i = 0; i < randomNum; ++i) {
+			cout << "Adding bottom.\n";
+		}
+
 		// Add a random number of shoes from the vector of shoes
+		randomNum = MIN + (rand() % (MAX - MIN + 1));
+		for (int i = 0; i < randomNum; ++i) {
+			cout << "Adding bottom.\n";
+		}
 	}
 
 	// Before the time periods begin, call displayStock() to display the initial state of each store, showing their beginning stock
@@ -86,4 +110,6 @@ int main() {
 			// Whenever one of these events happen, print the change, e.g. "3 tops were added to [Clothing Store Name]".
 		// Wait or pause briefly to simulate the passage of time between intervals
 	// End of main function
+
+	return 0;
 }
