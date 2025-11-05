@@ -13,13 +13,14 @@
 using namespace std;
 
 // Define constants for the number of simulation days, the number of stores, the name of each store, the name of each clothing category (top, bottom, or shoes)
-enum ClothingCategories { TOP, BOTTOMS, SHOES };
+enum ClothingCategories { TOPS, BOTTOMS, SHOES };
+const int NUM_DAYS = 25;
 
 
 // Define a struct for a single clothing piece, containing the clothing piece's name and category (top, bottom, or shoes)
 struct Clothing {
 	string name;
-	string category;	// "Top", "Bottoms", or "Shoes"
+	string category;	// "Tops", "Bottoms", or "Shoes"
 	Clothing(string n, string c) : name(n), category(c) {}
 };
 
@@ -35,6 +36,7 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 
 		// For every clothing category (tops, bottoms, shoes)
 		for (const auto& category : store.second) {
+			// Output category name
 			cout << category.front().category << "\n";
 			// Output all the clothing items in that category.
 			for (const auto& clothingPiece : category) {
@@ -48,6 +50,10 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 // Arguments: a map of clothing stores, the name of the particular clothing store, the three vectors for tops, bottoms, and shoes.
 // One random category (tops, bottoms, shoes) is selected and guaranteed to be restocked with a random number of clothes
 // The other categories have a chance to be restocked
+void restockClothing(const map<string, array<list<Clothing>, 3>>& clothingStores, const string& storeName) {
+	cout << storeName << " gets its clothing restocked.\n";
+}
+
 
 // sellClothing() - Function to sell clothing from a particular store
 // Arguments - a map of clothing stores, the name of the particular clothing store.
@@ -70,7 +76,7 @@ int main() {
 		// Read at least 100 pieces of clothing from a file, extracting its data, and storing into three vectors (depending on if it's a top, bottom, or shoes)
 		cout << "Reading file into vectors topsPool, bottomsPool, shoesPool.\n";
 		// Here are some mockup examples of clothing pieces that may be read from the file:
-		topsPool.push_back(Clothing("Striped Blouse", "Top"));
+		topsPool.push_back(Clothing("Striped Blouse", "Tops"));
 		bottomsPool.push_back(Clothing("Black Slacks", "Bottoms"));
 		shoesPool.push_back(Clothing("Knee-high Boots", "Shoes"));
 		// Close the file
@@ -95,22 +101,22 @@ int main() {
 		// Add a random number of tops from the vector of tops
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
-			cout << "Adding top.\n";
-			store.second[TOP].push_back(topsPool.at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
+			cout << "Adding tops.\n";
+			store.second[TOPS].push_back(topsPool.at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
 															// but for simplicity in this mockup example, the index is just 0.
 		}
 
 		// Add a random number of bottoms from the vector of bottoms
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
-			cout << "Adding bottom.\n";
+			cout << "Adding bottoms.\n";
 			store.second[BOTTOMS].push_back(bottomsPool.at(0));
 		}
 
 		// Add a random number of shoes from the vector of shoes
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
-			cout << "Adding bottom.\n";
+			cout << "Adding bottoms.\n";
 			store.second[SHOES].push_back(shoesPool.at(0));
 		}
 		cout << "\n";
@@ -118,17 +124,34 @@ int main() {
 
 	// Before the time periods begin, call displayStock() to display the initial state of each store, showing their beginning stock
 	displayStock(clothingStores);
+	cout << "\n";
 
 	// Begin a time-based simulation for clothing store changes:
+	cout << "Now beginning time intervals.\n";
 	// For 25 time intervals:
+	for (int i = 0; i < NUM_DAYS; ++i) {
+		cout << "--- DAY " << i << " ---\n";
 		// Iterate through each clothing store.
+		for (const auto& store : clothingStores) {
+			cout << "At " << store.first << ":\n";
+
+			int probability;
+
 			// For that particular clothing store, these events have a chance of happening:
-			// Event 1 - Clothing gets restocked. (call restockClothing)
-			// Event 2 - Clothing gets sold. (call sellClothing)
-			// Event 3 - Clothing gets transferred between stores. (call transferClothing)
+			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
+			probability = rand() % 60 + 1;
+			restockClothing(clothingStores, store.first);
+			// Event 2 (60% cnance) - Clothing gets sold. (call sellClothing)
+			probability = rand() % 60 + 1;
+
+			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
+			probability = rand() % 60 + 1;
+
 			// Whenever one of these events happen, print the change, e.g. "3 tops were added to [Clothing Store Name]".
+		}
 		// Wait or pause briefly to simulate the passage of time between intervals
 	// End of main function
+	}
 
 	return 0;
 }
