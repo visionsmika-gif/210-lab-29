@@ -5,6 +5,7 @@
 #include <map>
 #include <array>
 #include <list>
+#include <vector>
 #include <string>
 
 using namespace std;
@@ -12,6 +13,11 @@ using namespace std;
 // Define constants for the number of simulation days, the number of stores, the name of each store, the name of each clothing category (top, bottom, or shoes)
 
 // Define a struct for a single clothing piece, containing the clothing piece's name and category (top, bottom, or shoes)
+struct Clothing {
+	string name;
+	string category;	// "Top", "Bottoms", or "Shoes"
+	Clothing(string n, string c) : name(n), category(c) {}
+};
 
 // displayStock() - Function to display store stock
 // Arguments: a map of clothing stores.
@@ -38,16 +44,29 @@ int main() {
 		// If the file does not open, print an error and exit
 		// Read at least 100 pieces of clothing from a file, extracting its data, and storing into three vectors (depending on if it's a top, bottom, or shoes)
 		// Close the file
+	cout << "Reading file into topsPool, bottomsPool, shoesPool";
+	vector<Clothing> topsPool, bottomsPool, shoesPool;
+	topsPool.push_back(Clothing("", "Top"));
+	bottomsPool.push_back(Clothing(""), "Bottoms");
+
+
+
 
 	// Create a map of clothing stores
-	map<string, array<list<Clothing>, 1>>
+	// The map's key is the clothing store name (string)
+	// The map's value is an array of 3 lists for tops, bottoms, and shoes
+	map<string, array<list<Clothing>, 3>> clothingStores;
 
 	// For each clothing store, go through each of its categories: tops, bottoms, shoes
+	cout << "Initializing clothingStores with values from topsPool, bottomsPool, and shoesPool.";
+	for (int i = 0; i < clothingStores.size(); ++i) {
 		// Add a random number of tops from the vector of tops
 		// Add a random number of bottoms from the vector of bottoms
 		// Add a random number of shoes from the vector of shoes
+	}
 
 	// Before the time periods begin, call displayStock() to display the initial state of each store, showing their beginning stock
+	displayStock(clothingStores);
 
 	// Begin a time-based simulation for clothing store changes:
 	// For 25 time intervals:
