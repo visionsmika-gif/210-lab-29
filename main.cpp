@@ -51,8 +51,8 @@ void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
 // Arguments: a map of clothing stores, the name of the particular clothing store, the three vectors for tops, bottoms, and shoes.
 // One random category (tops, bottoms, shoes) is selected and guaranteed to be restocked with a random number of clothes
 // The other categories have a chance to be restocked
-void restockClothing(const map<string, array<list<Clothing>, 3>>& clothingStores, const string& storeName,
-					const vector<Clothing>& clothingPool);
+/*void restockClothing(const map<string, array<list<Clothing>, 3>>& clothingStores, const string& storeName,
+					const vector<Clothing>& clothingPool) {
 	
 	// Choose a random category guaranteed to be added to.
 	int randomCategory = rand() % 3;
@@ -67,26 +67,9 @@ void restockClothing(const map<string, array<list<Clothing>, 3>>& clothingStores
 		clothingStores[storeName][randomCategory].push_back();
 	}
 
-	clothingStores[storeName][randomCategory].
+	// clothingStores[storeName][randomCategory].
 
-
-
-		for (auto& store : clothingStores) {
-			// Output store name
-			cout << "Initializing " << store.first << ":\n";
-
-			const int MAX = 5;
-			const int MIN = 3;
-			int randomNum;	// Random number between 3-5
-
-			// Add a random number of tops from the vector of tops
-			randomNum = MIN + (rand() % (MAX - MIN + 1));
-			for (int i = 0; i < randomNum; ++i) {
-				cout << "Adding tops.\n";
-				store.second[TOPS].push_back(topsPool.at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
-				// but for simplicity in this mockup example, the index is just 0.
-			}
-}
+}*/
 
 
 // sellClothing() - Function to sell clothing from a particular store
@@ -137,7 +120,7 @@ int main() {
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
 			cout << "Adding tops.\n";
-			store.second[TOPS].push_back(topsPool.at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
+			store.second[TOPS].push_back(clothingPool[TOPS].at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
 															// but for simplicity in this mockup example, the index is just 0.
 		}
 
@@ -145,14 +128,14 @@ int main() {
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
 			cout << "Adding bottoms.\n";
-			store.second[BOTTOMS].push_back(bottomsPool.at(0));
+			store.second[BOTTOMS].push_back(clothingPool[BOTTOMS].at(0));
 		}
 
 		// Add a random number of shoes from the vector of shoes
 		randomNum = MIN + (rand() % (MAX - MIN + 1));
 		for (int i = 0; i < randomNum; ++i) {
 			cout << "Adding bottoms.\n";
-			store.second[SHOES].push_back(shoesPool.at(0));
+			store.second[SHOES].push_back(clothingPool[SHOES].at(0));
 		}
 		cout << "\n";
 	}
@@ -185,7 +168,7 @@ int main() {
 
 			// Event 2 (60% cnance) - Clothing gets sold. (call sellClothing)
 			probability = rand() % 60 + 1;
-			sellClothing(clothingStores, store.first);
+			// sellClothing(clothingStores, store.first);
 
 			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
 			probability = rand() % 60 + 1;
