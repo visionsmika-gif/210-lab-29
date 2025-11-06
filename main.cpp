@@ -94,11 +94,11 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
 
 	// Choose a random category to sell from.
-	int categoryIndex = generateRandomNum(0, 2);
+	int catIndex = generateRandomNum(0, 2);
 
 	// Return if that category is empty (can't sell anything if there's nothing).
 	auto& store = clothingStores[storeName];
-	if (store[categoryIndex].empty()) {
+	if (store[catIndex].empty()) {
 		return false;	// False - nothing sold
 	}
 
@@ -108,21 +108,21 @@ bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 	int randomNum = generateRandomNum(1, 3);
 
 	// Ensure we don't sell more clothes than we have
-	while (randomNum > store[categoryIndex].size()) {
+	while (randomNum > store[catIndex].size()) {
 		randomNum = generateRandomNum(1, 3);
 	}
 
-	cout << randomNum << " " << categoryNames[categoryIndex] << " have been sold\n";
+	cout << randomNum << " " << categoryNames[catIndex] << " have been sold\n";
 
 	// Sell clothes from that category.
 	for (int i = 0; i < randomNum; ++i) {
 		// Select a random clothing to sell
-		auto it = store[categoryIndex].begin();
-		int position = generateRandomNum(0, (store[categoryIndex].size() - 1));
+		auto it = store[catIndex].begin();
+		int position = generateRandomNum(0, (store[catIndex].size() - 1));
 		advance(it, position);
 
 		// Sell that particular clothing
-		store[categoryIndex].erase(it);
+		store[catIndex].erase(it);
 	}
 	return true;	// true - something sold
 }
@@ -138,19 +138,49 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 	int catIndex = generateRandomNum(0, 2);
 
 	// If the category is empty, return without transferring.
-	auto& store = clothingStores[storeName];
-	if (store[catIndex].empty()) {
+	auto& thisStore = clothingStores[storeName];
+	if (thisStore[catIndex].empty()) {
 		return false;
+	}
+
+	// Choose a random number of clothes to transfer from that category.	
+	const int MIN = 1;
+	const int MAX = 3;
+	int numClothes = generateRandomNum(1, 3);
+
+	// Ensure we don't transfer more clothing than we have.
+	while (numClothes > thisStore[catIndex].size()) {
+		numClothes = generateRandomNum(1, 3);
 	}
 
 	// Choose a random clothing store to transfer to.
 	int position = generateRandomNum(0, clothingStores.size() - 1);
-	auto it = clothingStores.begin();
-	advance(it, position);
+	auto otherStoreIt = clothingStores.begin();
+	advance(otherStoreIt, position);
+	auto& otherStore = *otherStoreIt;
 
-	if (it != clothingStores.end()) {
-		cout << storeName << " transfers clothing to " << it->first << "\n";
+	// Output action.
+	if (otherStoreIt != clothingStores.end()) {
+		cout << storeName << " transfers " << numClothes << " clothing to " << otherStoreIt->first << ".\n";
 	}
+
+
+	// Remove clothes from one store and add them to the other.
+	for (int i = 0; i < numClothes; ++i) {
+		// Select a random clothing to transfer
+		auto it = thisStore[catIndex].begin();
+		int position = generateRandomNum(0, (thisStore[catIndex].size() - 1));
+		advance(it, position);
+
+		// Save that clothing
+		Clothing transferredPiece = *it;
+
+		// Remove that particular clothing from our store
+		thisStore[catIndex].erase(it);
+
+
+	}
+
 
 
 
@@ -243,9 +273,9 @@ int main() {
 				somethingHappened = true;
 			}
 
-			// Event 2 (70% cnance) - Clothing gets sold. (call sellClothing)
+			// Event 2 (80% cnance) - Clothing gets sold. (call sellClothing)
 			probability = generateRandomNum(1, 100);
-			if (probability <= 70) {
+			if (probability <= 80) {
 				if (sellClothing(clothingStores, store.first)) {
 					somethingHappened = true;
 				}
