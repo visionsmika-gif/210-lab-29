@@ -1,0 +1,25 @@
+I can unit test the following functions:
+* populateClothingPool
+* addClothes
+* restockClothing
+* displayStock
+* sellClothing
+* transferClothing
+
+First I will separate the functions into a header file with an implementation file and include the header file in the unit test program.
+
+For populateClothingPool(), I will read from the file clothing.txt() and ensure that the clothing pool contains the expected clothing
+in each of its categories (i.e. Tops are only put into the 'Top' category, Bottoms are only put into the 'Bottoms' category, and so on).
+
+For addClothes(), I will try filling a store with a small number of items. Then, I will check that the stores contain those items,
+meaning that the clothes were successfully added.
+
+For restockClothing(), I will call the function on a store and check that the stock increased by the correct number in the correct category.
+
+For sellClothing(), I will call the function on a store and check that the stock decreased by the correct number in the correct category.
+
+For transferClothing(), I will call the function on a store and have it transfer clothing to another store. I will check that the store correctly
+lost one item from the correct category, while the other store correctly gained that same item in the same category.
+
+I will use displayStock() between each of the above functions to ensure that they executed correctly, as well as to ensure that the stock is
+displayed correctly.
