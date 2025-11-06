@@ -116,10 +116,13 @@ bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 
 	// Sell clothes from that category.
 	for (int i = 0; i < randomNum; ++i) {
-		store[categoryIndex].pop_front();	// access particular store's category and remove an element		
-		// In the real code, a random piece of clothing would be sold,
-		// but for simplicity in this mockup example, the front of the category is just sold.
+		// Select a random clothing to sell
+		auto it = store[categoryIndex].begin();
+		int position = generateRandomNum(0, (store[categoryIndex].size() - 1));
+		advance(it, position);
 
+		// Sell that particular clothing
+		store[categoryIndex].erase(it);
 	}
 	return true;	// true - something sold
 }
@@ -130,15 +133,13 @@ bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 // A random other store is chosen to be transferred to
 // A random piece of clothing from a random category is taken from the parameter store and added to the other store
 void transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
-	int itOffset = rand() % clothingStores.size();	// select a random clothing store
-
-	// In the real code, more advanced logic will be added to transferClothing().
-	// However, since the mockup only has 1 clothing store, transferClothing() has not yet had all its logic implemented
-	// (because a clothign store can't transfer to itself)
 	
-	// TODO: Ensure that a clothing store does not select itself as the store to transfer to.
+	// select a random clothing store
+	int itOffset = rand() % clothingStores.size();
 	auto it = clothingStores.begin();
 	advance(it, itOffset);
+
+
 
 	if (it != clothingStores.end()) {
 		cout << storeName << " transfers clothing to " << it->first << "\n";
