@@ -1,3 +1,4 @@
+DESCRIPTION:
 I can unit test the following functions:
 * populateClothingPool
 * addClothes
@@ -6,7 +7,7 @@ I can unit test the following functions:
 * sellClothing
 * transferClothing
 
-First I will separate the functions into a header file and include the header file in the unit test program.
+First I will copy functions into a header file and include the header file in the unit test program.
 
 For populateClothingPool(), I will read from the file clothing.txt() and ensure that the clothing pool contains the expected clothing
 in each of its categories (i.e. Tops are only put into the 'Top' category, Bottoms are only put into the 'Bottoms' category, and so on).
@@ -18,11 +19,84 @@ For restockClothing(), I will call the function on a store and check that the st
 
 For sellClothing(), I will call the function on a store and check that the stock decreased by the correct number in the correct category.
 
-For transferClothing(), I will call the function on a store and have it transfer clothing to another store. I will check that the store correctly
-lost one item from the correct category, while the other store correctly gained that same item in the same category.
+For transferClothing(), I will call the function on a store and have it transfer clothing to another store. I will check that if a transfer occurred, then
+the store correctly lost one item from the correct category, while the other store correctly gained that same item in the same category.
 
 I will use displayStock() between each of the above functions to ensure that they executed correctly, as well as to ensure that the stock is
 displayed correctly.
 
-...
-...
+
+Driver program for unit testing:
+
+#include "clothing_store.h"
+
+using namespace std;
+
+int main() {
+    srand(time(0));
+
+    // TEST 1: populateClothingPool()
+    cout << "TEST 1: populateClothingPool()\n";
+    cout << "Attempting to read a file into the vector clothingPool...\n";
+    array<vector<Clothing>, NUM_CATEGORIES> clothingPool;
+    try {
+        populateClothingPool(clothingPool, "clothing.txt");
+        cout << "Successfully opened file.\n";
+    }
+    catch (const runtime_error& e) {
+        cout << "ERROR: " << e.what() << endl;
+        return 1;
+    }
+    cout << "Here are the first 3 items in clothingPool's TOPS category:\n";
+    for (int i = 0; i < 3; ++i) {
+        cout << clothingPool[TOPS].at(i).name << "\n";
+    }
+    cout << "Here are the first 3 items in clothingPool's BOTTOMS category:\n";
+    for (int i = 0; i < 3; ++i) {
+        cout << clothingPool[BOTTOMS].at(i).name << "\n";
+    }
+    cout << "Here are the first 3 items in clothingPool's SHOES category:\n";
+    for (int i = 0; i < 3; ++i) {
+        cout << clothingPool[SHOES].at(i).name << "\n";
+    }
+    cout << "\n";
+
+
+    // TEST 2: addClothes()
+    cout << "TEST 2: addClothes()\n";
+    map<string, array<list<Clothing>, NUM_CATEGORIES>> clothingStores;
+    clothingStores["Aesthetic Apparel"];
+
+    cout << "Calling addClothes() to add 5 tops to Aesthetic Apparel...\n";
+    addClothes(TOPS, 5, clothingStores["Aesthetic Apparel"], clothingPool);
+
+    cout << "Calling addClothes() to add 2 shoes to Aesthetic Apparel...\n";
+    addClothes(SHOES, 2, clothingStores["Aesthetic Apparel"], clothingPool);
+    displayStock(clothingStores);
+    cout << "\n";
+
+    // TEST 3: restockClothing()
+    cout << "TEST 3: restockClothing()\n";
+    cout << "Calling restockClothes() to restock Aesthetic Apparel with a random number of clothes...\n";
+    restockClothing(clothingStores, "Aesthetic Apparel", clothingPool);
+    displayStock(clothingStores);
+    cout << "\n";
+
+    // TEST 4: sellClothing()
+    cout << "TEST 4: sellClothing()\n";
+    cout << "Calling sellClothing() to sell a random number of clothes from Aesthetic Apparel...\n";
+    bool sold = sellClothing(clothingStores, "Aesthetic Apparel");
+    cout << (sold ? "Items have been sold.\n" : "Nothing has been sold.\n");    // Test return value
+    displayStock(clothingStores);
+    cout << "\n";
+
+    // TEST 5: transferClothing()
+    cout << "TEST 5: transferClothing()\n";
+    cout << "Calling transferClothing() to transfer a random number of clothes from Aesthetic Apparel to Bubbly Boutique...\n";
+    clothingStores["Bubbly Boutique"];
+    bool transferred = transferClothing(clothingStores, "Aesthetic Apparel");    // Test return value
+    cout << (transferred ? "Items have been transferred.\n" : "Nothing has been transferred.\n");
+    displayStock(clothingStores);
+
+    return 0;
+}
