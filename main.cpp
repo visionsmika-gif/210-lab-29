@@ -78,7 +78,7 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 	const int MAX = 3;
 	int numClothes = MIN + (rand() % (MAX - MIN + 1));	// Random number between 1-3
 
-	cout << numClothes << " " << categoryNames[catIndex] << " have been restocked\n";
+	cout << numClothes << " " << categoryNames[catIndex] << " get restocked\n";
 
 
 	// Add clothes to that category.
@@ -112,7 +112,7 @@ bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 		randomNum = generateRandomNum(1, 3);
 	}
 
-	cout << randomNum << " " << categoryNames[catIndex] << " have been sold\n";
+	cout << randomNum << " " << categoryNames[catIndex] << " get sold\n";
 
 	// Sell clothes from that category.
 	for (int i = 0; i < randomNum; ++i) {
@@ -154,16 +154,18 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 	}
 
 	// Choose a random clothing store to transfer to.
-	int position = generateRandomNum(0, clothingStores.size() - 1);
-	auto otherStoreIt = clothingStores.begin();
-	advance(otherStoreIt, position);
-	auto& otherStore = *otherStoreIt;
+	do {
+		int position = generateRandomNum(0, clothingStores.size() - 1);
+		auto otherStoreIt = clothingStores.begin();
+		advance(otherStoreIt, position);
+		auto& otherStore = (*otherStoreIt).second;
+	} while (otherStore == thisStore);
+
 
 	// Output action.
 	if (otherStoreIt != clothingStores.end()) {
-		cout << storeName << " transfers " << numClothes << " clothing to " << otherStoreIt->first << ".\n";
+		cout << storeName << " transfers " << numClothes << " " << categoryNames[catIndex] << " to " << otherStoreIt->first << ".\n";
 	}
-
 
 	// Remove clothes from one store and add them to the other.
 	for (int i = 0; i < numClothes; ++i) {
@@ -178,11 +180,8 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 		// Remove that particular clothing from our store
 		thisStore[catIndex].erase(it);
 
-
+		otherStore[catIndex].push_back(transferredPiece);
 	}
-
-
-
 
 	return true;
 }
