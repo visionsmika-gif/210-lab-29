@@ -10,7 +10,6 @@
 #include <ctime>	// for seed
 #include <cstdlib>	// for RNG
 #include <fstream>
-#include <stdexcept>
 
 using namespace std;
 
@@ -37,34 +36,6 @@ void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>
 		// cout << "Adding " << categoryNames[CAT_INDEX] << ".\n";			DELETE THIS LINE. is used for debug purposes
 		store[CAT_INDEX].push_back(clothingPool[CAT_INDEX].at(index));
 	}
-}
-
-void populateClothingPool(array<vector<Clothing>, NUM_CATEGORIES>& clothingPool, const string FILE_NAME) {
-	ifstream clothingFile;
-	clothingFile.open(FILE_NAME);
-
-	if (!clothingFile) {
-		throw runtime_error("Unable to open the file " + FILE_NAME + ".\n");
-	}
-
-	// Read file into clothingPool
-	string clothingName;
-	string clothingCategory;
-	while (getline(clothingFile, clothingName)) {
-		getline(clothingFile, clothingCategory);
-
-		if (clothingCategory == "Tops") {
-			clothingPool[TOPS].push_back(Clothing(clothingName, clothingCategory));
-		}
-		else if (clothingCategory == "Bottoms") {
-			clothingPool[BOTTOMS].push_back(Clothing(clothingName, clothingCategory));
-		}
-		else if (clothingCategory == "Shoes") {
-			clothingPool[SHOES].push_back(Clothing(clothingName, clothingCategory));
-		}
-	}
-
-	clothingFile.close();
 }
 
 // displayStock() - Function to display store stock
@@ -186,7 +157,7 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 	auto otherStoreIt = clothingStores.begin();
 	do {
 		int position = generateRandomNum(0, clothingStores.size() - 1);
-		auto otherStoreIt = clothingStores.begin();
+		otherStoreIt = clothingStores.begin();
 		advance(otherStoreIt, position);
 	} while (otherStoreIt->first == storeName);
 
@@ -216,15 +187,31 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 
 int main() {
 	srand(time(0));
-	array<vector<Clothing>, NUM_CATEGORIES> clothingPool;
+	array<vector<Clothing>, 3> clothingPool;
 
-	// Populate clothing pool from a file
 	const string FILE_NAME = "clothing.txt";
-	try {
-		populateClothingPool(clothingPool, FILE_NAME);
+	ifstream clothingFile;
+	clothingFile.open(FILE_NAME);
+
+	if (!clothingFile) {
+		cout << "ERROR: Unable to open the file " << FILE_NAME << ".\n";
+		return 1;
 	}
-	catch (const runtime_error& e) {
-		cout << "ERROR: " << e.what() << "\n";
+	
+	string clothingName;
+	string clothingCategory;
+	while (getline(clothingFile, clothingName)) {
+		getline(clothingFile, clothingCategory);
+
+		if (clothingCategory == "Tops") {
+			clothingPool[TOPS].push_back(Clothing(clothingName, clothingCategory));
+		}
+		else if (clothingCategory == "Bottoms") {
+			clothingPool[BOTTOMS].push_back(Clothing(clothingName, clothingCategory));
+		}
+		else if (clothingCategory == "Shoes") {
+			clothingPool[SHOES].push_back(Clothing(clothingName, clothingCategory));
+		}
 	}
 
 	// Create a map of clothing stores.
@@ -236,6 +223,9 @@ int main() {
 
 	// Initialize each store.
 	for (auto& store : clothingStores) {
+		// Output current store name.
+		cout << "Initializing " << store.first << ":\n";
+
 		// Each store will start with 1 to 3 clothing pieces per category.
 		const int MIN_CLOTHES = 1;
 		const int MAX_CLOTHES = 3;
@@ -251,6 +241,8 @@ int main() {
 		// Add 1 to 3 shoes.
 		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
 		addClothes(SHOES, numClothes, store.second, clothingPool);
+
+		cout << "\n";
 	}
 
 	// Before the time periods begin, call displayStock() to display the initial state of each store, showing their beginning stock
@@ -270,14 +262,16 @@ int main() {
 
 			int probability;
 
-
+			// For that particular clothing store, these events have a chance of happening:
+			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
 			probability = generateRandomNum(1, 100);
-
+			// restockClothing(clothingStores, store.first);
 			if (probability <= 60) {
 				restockClothing(clothingStores, store.first, clothingPool);
 				somethingHappened = true;
 			}
 
+			// Event 2 (80% cnance) - Clothing gets sold. (call sellClothing)
 			probability = generateRandomNum(1, 100);
 			if (probability <= 80) {
 				if (sellClothing(clothingStores, store.first)) {
@@ -285,7 +279,9 @@ int main() {
 				}
 			}
 
+			// sellClothing(clothingStores, store.first);
 
+			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
 			probability = generateRandomNum(1, 100);
 			if (probability <= 20) {
 				if (transferClothing(clothingStores, store.first)) {
@@ -296,10 +292,11 @@ int main() {
 			if (!somethingHappened) {
 				cout << "Nothing happened.\n";
 			}
+			// Whenever one of these events happen, print the change, e.g. "3 tops were added to [Clothing Store Name]".
 
 			cout << "\n";
 		}
-
+		// Display stock by the end of the day
 		displayStock(clothingStores);
 	}
 
