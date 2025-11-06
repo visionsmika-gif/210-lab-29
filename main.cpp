@@ -154,15 +154,12 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 	}
 
 	// Choose a random clothing store to transfer to.
-	bool sameStore;
 	auto otherStoreIt = clothingStores.begin();
 	do {
 		int position = generateRandomNum(0, clothingStores.size() - 1);
 		auto otherStoreIt = clothingStores.begin();
 		advance(otherStoreIt, position);
-		auto& otherStore = *otherStoreIt;
-		sameStore = (otherStore.first == storeName);
-	} while (sameStore);
+	} while (otherStoreIt->first == storeName);
 
 	// Output action.
 	if (otherStoreIt != clothingStores.end()) {
@@ -182,7 +179,7 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 		// Remove that particular clothing from our store
 		thisStore[catIndex].erase(it);
 
-		otherStore[catIndex].push_back(transferredPiece);
+		otherStoreIt->second[catIndex].push_back(transferredPiece);
 	}
 
 	return true;
