@@ -9,6 +9,7 @@
 #include <string>
 #include <ctime>	// for seed
 #include <cstdlib>	// for RNG
+#include <fstream>
 
 using namespace std;
 
@@ -25,27 +26,70 @@ struct Clothing {
 	Clothing(string n, string c) : name(n), category(c) {}
 };
 
+int generateRandomNum(const int MIN, const int MAX) {
+	return MIN + (rand() % (MAX - MIN + 1));
+}
+
+void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>, NUM_CATEGORIES>& store, const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
+	for (int i = 0; i < NUM_CLOTHES; ++i) {
+		int index = generateRandomNum(0, (clothingPool[CAT_INDEX].size() - 1));
+		// cout << "Adding " << categoryNames[CAT_INDEX] << ".\n";			DELETE THIS LINE. is used for debug purposes
+		store[CAT_INDEX].push_back(clothingPool[CAT_INDEX].at(index));
+	}
+}
+
+void populateClothingPool(array<vector<Clothing>, NUM_CATEGORIES>& clothingPool, const string FILE_NAME) {
+	ifstream clothingFile;
+	clothingFile.open(FILE_NAME);
+
+	if (!clothingFile) {
+		throw runtime_error("Unable to open the file " + FILE_NAME + ".\n");
+	}
+
+	// Read file into clothingPool
+	string clothingName;
+	string clothingCategory;
+	while (getline(clothingFile, clothingName)) {
+		getline(clothingFile, clothingCategory);
+
+		if (clothingCategory == "Tops") {
+			clothingPool[TOPS].push_back(Clothing(clothingName, clothingCategory));
+		}
+		else if (clothingCategory == "Bottoms") {
+			clothingPool[BOTTOMS].push_back(Clothing(clothingName, clothingCategory));
+		}
+		else if (clothingCategory == "Shoes") {
+			clothingPool[SHOES].push_back(Clothing(clothingName, clothingCategory));
+		}
+	}
+
+	clothingFile.close();
+}
+
 // displayStock() - Function to display store stock
 // Arguments: a map of clothing stores.
 // Goes through each map element, outputs the name of the store (map key) and the clothing stores' tops, bottoms, and shoes (map value)
-void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
-	cout << "Called displayStock()\n";
-
+void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores) {
 	// For every store,
 	for (const auto& store : clothingStores) {
-		cout << "Now displaying stock for " << store.first << ":\n";
+		cout << "[ STOCK REPORT for " << store.first << " ]\n";
 
 		// For every clothing category (tops, bottoms, shoes)
 		for (int i = 0; i < NUM_CATEGORIES; ++i) {
 			const auto& category = store.second[i];	// get list for current category
-			cout << categoryNames[i] << ": ";
-			for (const auto& clothingPiece : category) {
-				cout << clothingPiece.name << ", ";
+			cout << ">> " << categoryNames[i] << ": ";
+			if (store.second[i].empty()) {
+				cout << "OUT OF STOCK\n";
 			}
-			cout << "\n";
+			else {
+				cout << "\n";
+				for (const auto& clothingPiece : category) {
+					cout << "\t- " << clothingPiece.name << "\n";
+				}
+			}
 		}
+		cout << "\n";
 	}
-	cout << "End of displayStock()\n";
 }
 
 // restockClothing() - Function to add new clothing to a particular store
@@ -55,150 +99,171 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 					const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
 	
 	// Choose a random category to be added to.
-	int categoryIndex = rand() % 3;
+	int catIndex = rand() % 3;
 
 	// Choose a random number of clothes to add to that category.
 	const int MIN = 1;
 	const int MAX = 3;
-	int randomNum = MIN + (rand() % (MAX - MIN + 1));	// Random number between 1-3
+	int numClothes = MIN + (rand() % (MAX - MIN + 1));	// Random number between 1-3
 
-	cout << randomNum << " " << categoryNames[categoryIndex] << " have been restocked\n";
+	cout << numClothes << " " << categoryNames[catIndex] << " get restocked\n";
 
 
 	// Add clothes to that category.
-	for (int i = 0; i < randomNum; ++i) {
-		auto& store = clothingStores[storeName];							// access particular store
-		store[categoryIndex].push_back(clothingPool[categoryIndex].at(0));	// access particular store's category and add a new element
-		// In the real code, a random index for a random clothing piece in clothingPool would be chosen,
-		// but for simplicity in this mockup example, the index is just 0.
-	}
+	auto& store = clothingStores[storeName];
+	addClothes(catIndex, numClothes, store, clothingPool);
 }
-
 
 // sellClothing() - Function to sell clothing from a particular store
 // Arguments - a map of clothing stores, the name of the particular clothing store.
 // One random category (tops, bottoms, shoes) is selected and guaranteed to sell a random number of clothes
 // The other categories have a chance to sell
-void sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
+bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
 
 	// Choose a random category to sell from.
-	int categoryIndex = rand() % 3;
+	int catIndex = generateRandomNum(0, 2);
 
-	// Return if that category is empty (can't sell if there's nothing)
+	// Return if that category is empty (can't sell anything if there's nothing).
 	auto& store = clothingStores[storeName];
-	if (store[categoryIndex].empty()) {
-		return;
+	if (store[catIndex].empty()) {
+		return false;	// False - nothing sold
 	}
 
-	// Choose a random number of clothes to sell from category.
+	// Choose a random number of clothes to sell from category.	
 	const int MIN = 1;
 	const int MAX = 3;
-	int randomNum = MIN + (rand() % (MAX - MIN + 1));	// Random number between 1-3
+	int randomNum = generateRandomNum(1, 3);
 
 	// Ensure we don't sell more clothes than we have
-	while (randomNum > store[categoryIndex].size()) {
-		randomNum = MIN + (rand() % (MAX - MIN + 1));
+	while (randomNum > store[catIndex].size()) {
+		randomNum = generateRandomNum(1, 3);
 	}
 
-	cout << randomNum << " " << categoryNames[categoryIndex] << " have been sold\n";
+	cout << randomNum << " " << categoryNames[catIndex] << " get sold\n";
 
 	// Sell clothes from that category.
 	for (int i = 0; i < randomNum; ++i) {
-		store[categoryIndex].pop_front();	// access particular store's category and remove an element		
-		// In the real code, a random piece of clothing would be sold,
-		// but for simplicity in this mockup example, the front of the category is just sold.
+		// Select a random clothing to sell
+		auto it = store[catIndex].begin();
+		int position = generateRandomNum(0, (store[catIndex].size() - 1));
+		advance(it, position);
 
+		// Sell that particular clothing
+		store[catIndex].erase(it);
 	}
+	return true;	// true - something sold
 }
-
 
 // transferClothing() - Function to transfer clothing between two stores
 // Arguments - a map of clothing stores, the name of the particular clothing store
 // A random other store is chosen to be transferred to
 // A random piece of clothing from a random category is taken from the parameter store and added to the other store
-void transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
-	int itOffset = rand() % clothingStores.size();	// select a random clothing store
+bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
 
-	// In the real code, more advanced logic will be added to transferClothing().
-	// However, since the mockup only has 1 clothing store, transferClothing() has not yet had all its logic implemented
-	// (because a clothign store can't transfer to itself)
-	
-	// TODO: Ensure that a clothing store does not select itself as the store to transfer to.
-	auto it = clothingStores.begin();
-	advance(it, itOffset);
+	// Choose a random category to transfer.
+	int catIndex = generateRandomNum(0, 2);
 
-	if (it != clothingStores.end()) {
-		cout << storeName << " transfers clothing to " << it->first << "\n";
+	// If the category is empty, return without transferring.
+	auto& thisStore = clothingStores[storeName];
+	if (thisStore[catIndex].empty()) {
+		return false;
 	}
+
+	// Choose a random number of clothes to transfer from that category.	
+	const int MIN = 1;
+	const int MAX = 3;
+	int numClothes = generateRandomNum(MIN, MAX);
+
+	// Ensure we don't transfer more clothing than we have.
+	while (numClothes > thisStore[catIndex].size()) {
+		numClothes = generateRandomNum(MIN, MAX);
+	}
+
+	// Choose a random clothing store to transfer to.
+	auto otherStoreIt = clothingStores.begin();
+	do {
+		int position = generateRandomNum(0, clothingStores.size() - 1);
+		otherStoreIt = clothingStores.begin();
+		advance(otherStoreIt, position);
+	} while (otherStoreIt->first == storeName);
+
+	// Output action.
+	if (otherStoreIt != clothingStores.end()) {
+		cout << storeName << " transfers " << numClothes << " " << categoryNames[catIndex] << " to " << otherStoreIt->first << ".\n";
+	}
+
+	// Remove clothes from one store and add them to the other.
+	for (int i = 0; i < numClothes; ++i) {
+		// Select a random clothing to transfer
+		auto it = thisStore[catIndex].begin();
+		int position = generateRandomNum(0, (thisStore[catIndex].size() - 1));
+		advance(it, position);
+
+		// Save that clothing
+		Clothing transferredPiece = *it;
+
+		// Remove that particular clothing from our store
+		thisStore[catIndex].erase(it);
+
+		otherStoreIt->second[catIndex].push_back(transferredPiece);
+	}
+
+	return true;
 }
 
-
-// Define main function
 int main() {
 	srand(time(0));
-
-	// Open external file 
-	cout << "Opening file...\n";
 	array<vector<Clothing>, 3> clothingPool;
 
-		// If the file does not open, print an error and exit
-		// Read at least 100 pieces of clothing from a file, extracting its data, and storing into three vectors (depending on if it's a top, bottom, or shoes)
-		cout << "Reading file into vectors topsPool, bottomsPool, shoesPool.\n";
-		// Here are some mockup examples of clothing pieces that may be read from the file:
-		clothingPool[TOPS].push_back(Clothing("Striped Blouse", "Tops"));
-		clothingPool[BOTTOMS].push_back(Clothing("Black Slacks", "Bottoms"));
-		clothingPool[SHOES].push_back(Clothing("Knee-high Boots", "Shoes"));
-		// Close the file
-		cout << "Closing file.\n\n";
-
-	// Create a map of clothing stores
-	// The map's key is the clothing store name (string)
-	// The map's value is an array of 3 lists for tops, bottoms, and shoes
+	// Read file into clothingPool.
+	const string FILE_NAME = "clothing.txt";
+	try {
+		populateClothingPool(clothingPool, FILE_NAME);
+	}
+	catch (const runtime_error& e) {
+		cout << "ERROR: " << e.what() << "\n";
+		return 1;
+	}
+	
+	// Create a map of clothing stores.
+	// Each store has an array of 3 lists for tops, bottoms, and shoes.
 	map<string, array<list<Clothing>, NUM_CATEGORIES>> clothingStores;
+	clothingStores["Aesthetic Apparel"];
 	clothingStores["Bubbly Boutique"];
+	clothingStores["Casual Couture"];
 
-	// For each clothing store, go through each of its categories: tops, bottoms, shoes
-	cout << "Initializing clothingStores with values from topsPool, bottomsPool, and shoesPool.\n";
+	// Initialize each store.
 	for (auto& store : clothingStores) {
-		// Output store name
+		// Output current store name.
 		cout << "Initializing " << store.first << ":\n";
 
-		const int MAX = 3;
-		const int MIN = 1;
-		int randomNum;	// Random number between 1-3
+		// Each store will start with 1 to 3 clothing pieces per category.
+		const int MIN_CLOTHES = 1;
+		const int MAX_CLOTHES = 3;
 
-		// Add a random number of tops from the vector of tops
-		randomNum = MIN + (rand() % (MAX - MIN + 1));
-		for (int i = 0; i < randomNum; ++i) {
-			cout << "Adding tops.\n";
-			store.second[TOPS].push_back(clothingPool[TOPS].at(0));	// In the real code, a random index for a random top in topsPool would be chosen,
-																	// but for simplicity in this mockup example, the index is just 0.
-		}
+		// Add tops.
+		int numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		addClothes(TOPS, numClothes, store.second, clothingPool);
 
-		// Add a random number of bottoms from the vector of bottoms
-		randomNum = MIN + (rand() % (MAX - MIN + 1));
-		for (int i = 0; i < randomNum; ++i) {
-			cout << "Adding bottoms.\n";
-			store.second[BOTTOMS].push_back(clothingPool[BOTTOMS].at(0));
-		}
+		// Add bottoms.
+		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		addClothes(BOTTOMS, numClothes, store.second, clothingPool);
 
-		// Add a random number of shoes from the vector of shoes
-		randomNum = MIN + (rand() % (MAX - MIN + 1));
-		for (int i = 0; i < randomNum; ++i) {
-			cout << "Adding bottoms.\n";
-			store.second[SHOES].push_back(clothingPool[SHOES].at(0));
-		}
+		// Add shoes.
+		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		addClothes(SHOES, numClothes, store.second, clothingPool);
+
 		cout << "\n";
 	}
 
-	// Before the time periods begin, call displayStock() to display the initial state of each store, showing their beginning stock
+	// Before the time periods begin, display the initial state of each store, showing their beginning stock.
 	displayStock(clothingStores);
 	cout << "\n";
 
 	// Begin a time-based simulation for clothing store changes:
 	cout << "Now beginning time intervals.\n";
 	// For 25 time intervals:
-	for (int i = 0; i <= NUM_DAYS; ++i) {
+	for (int i = 1; i <= NUM_DAYS; ++i) {
 		cout << "\n--- DAY " << i << " ---\n";
 		// Iterate through each clothing store.
 		for (const auto& store : clothingStores) {
@@ -208,43 +273,40 @@ int main() {
 
 			int probability;
 
-			// For that particular clothing store, these events have a chance of happening:
-			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
-			probability = rand() % 100 + 1;
-			// restockClothing(clothingStores, store.first);
+			// For a particular clothing store, these events have a chance of happening:
+		
+			// Event 1 (60% chance) - Clothing gets restocked.
+			probability = generateRandomNum(1, 100);
 			if (probability <= 60) {
 				restockClothing(clothingStores, store.first, clothingPool);
 				somethingHappened = true;
 			}
 
-			// Event 2 (70% cnance) - Clothing gets sold. (call sellClothing)
-			probability = rand() % 100 + 1;
-			if (probability <= 70) {
-				sellClothing(clothingStores, store.first);
-				somethingHappened = true;
+			// Event 2 (80% cnance) - Clothing gets sold.
+			probability = generateRandomNum(1, 100);
+			if (probability <= 80) {
+				if (sellClothing(clothingStores, store.first)) {
+					somethingHappened = true;
+				}
 			}
 
-			// sellClothing(clothingStores, store.first);
-
-			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
-			probability = rand() % 100 + 1;
+			// Event 3 (20% chance) - Clothing gets transferred between stores.
+			probability = generateRandomNum(1, 100);
 			if (probability <= 20) {
-				transferClothing(clothingStores, store.first);
+				if (transferClothing(clothingStores, store.first)) {
+					somethingHappened = true;
+				}
 			}
 
 			if (!somethingHappened) {
 				cout << "Nothing happened.\n";
 			}
-			// Whenever one of these events happen, print the change, e.g. "3 tops were added to [Clothing Store Name]".
 
 			cout << "\n";
 		}
-		// Display stock by the end of the day
+		
+		// Display the stock at the end of the day.
 		displayStock(clothingStores);
-
-		// Wait or pause briefly to simulate the passage of time between intervals
-
-	// End of main function
 	}
 
 	return 0;
