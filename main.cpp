@@ -33,7 +33,7 @@ int generateRandomNum(const int MIN, const int MAX) {
 void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>, NUM_CATEGORIES>& store, const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
 	for (int i = 0; i < NUM_CLOTHES; ++i) {
 		int index = generateRandomNum(0, (clothingPool[CAT_INDEX].size() - 1));
-		cout << "Adding " << categoryNames[CAT_INDEX] << ".\n";
+		// cout << "Adding " << categoryNames[CAT_INDEX] << ".\n";			DELETE THIS LINE. is used for debug purposes
 		store[CAT_INDEX].push_back(clothingPool[CAT_INDEX].at(index));
 	}
 }
@@ -49,11 +49,12 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 		// For every clothing category (tops, bottoms, shoes)
 		for (int i = 0; i < NUM_CATEGORIES; ++i) {
 			const auto& category = store.second[i];	// get list for current category
-			cout << ">> " << categoryNames[i] << ":\n";
+			cout << ">> " << categoryNames[i] << ": ";
 			if (store.second[i].empty()) {
 				cout << "OUT OF STOCK\n";
 			}
 			else {
+				cout << "\n";
 				for (const auto& clothingPiece : category) {
 					cout << "\t- " << clothingPiece.name << "\n";
 				}
@@ -93,22 +94,22 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
 
 	// Choose a random category to sell from.
-	int categoryIndex = rand() % 3;
+	int categoryIndex = generateRandomNum(0, 2);
 
-	// Return if that category is empty (can't sell if there's nothing)
+	// Return if that category is empty (can't sell anything if there's nothing).
 	auto& store = clothingStores[storeName];
 	if (store[categoryIndex].empty()) {
-		return false;	// false - nothing sold
+		return false;	// False - nothing sold
 	}
 
 	// Choose a random number of clothes to sell from category.	
 	const int MIN = 1;
 	const int MAX = 3;
-	int randomNum = MIN + (rand() % (MAX - MIN + 1));	// Random number between 1-3
+	int randomNum = generateRandomNum(1, 3);
 
 	// Ensure we don't sell more clothes than we have
 	while (randomNum > store[categoryIndex].size()) {
-		randomNum = MIN + (rand() % (MAX - MIN + 1));
+		randomNum = generateRandomNum(1, 3);
 	}
 
 	cout << randomNum << " " << categoryNames[categoryIndex] << " have been sold\n";
@@ -211,7 +212,7 @@ int main() {
 	// Begin a time-based simulation for clothing store changes:
 	cout << "Now beginning time intervals.\n";
 	// For 25 time intervals:
-	for (int i = 0; i <= NUM_DAYS; ++i) {
+	for (int i = 1; i <= NUM_DAYS; ++i) {
 		cout << "\n--- DAY " << i << " ---\n";
 		// Iterate through each clothing store.
 		for (const auto& store : clothingStores) {
