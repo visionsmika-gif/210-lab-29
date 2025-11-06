@@ -38,6 +38,34 @@ void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>
 	}
 }
 
+void populateClothingPool(array<vector<Clothing>, NUM_CATEGORIES>& clothingPool, const string FILE_NAME) {
+	ifstream clothingFile;
+	clothingFile.open(FILE_NAME);
+
+	if (!clothingFile) {
+		throw runtime_error("Unable to open the file " + FILE_NAME + ".\n");
+	}
+
+	// Read file into clothingPool
+	string clothingName;
+	string clothingCategory;
+	while (getline(clothingFile, clothingName)) {
+		getline(clothingFile, clothingCategory);
+
+		if (clothingCategory == "Tops") {
+			clothingPool[TOPS].push_back(Clothing(clothingName, clothingCategory));
+		}
+		else if (clothingCategory == "Bottoms") {
+			clothingPool[BOTTOMS].push_back(Clothing(clothingName, clothingCategory));
+		}
+		else if (clothingCategory == "Shoes") {
+			clothingPool[SHOES].push_back(Clothing(clothingName, clothingCategory));
+		}
+	}
+
+	clothingFile.close();
+}
+
 // displayStock() - Function to display store stock
 // Arguments: a map of clothing stores.
 // Goes through each map element, outputs the name of the store (map key) and the clothing stores' tops, bottoms, and shoes (map value)
@@ -86,7 +114,6 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 	addClothes(catIndex, numClothes, store, clothingPool);
 }
 
-
 // sellClothing() - Function to sell clothing from a particular store
 // Arguments - a map of clothing stores, the name of the particular clothing store.
 // One random category (tops, bottoms, shoes) is selected and guaranteed to sell a random number of clothes
@@ -126,7 +153,6 @@ bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 	}
 	return true;	// true - something sold
 }
-
 
 // transferClothing() - Function to transfer clothing between two stores
 // Arguments - a map of clothing stores, the name of the particular clothing store
@@ -189,31 +215,16 @@ int main() {
 	srand(time(0));
 	array<vector<Clothing>, 3> clothingPool;
 
+	// Read file into clothingPool.
 	const string FILE_NAME = "clothing.txt";
-	ifstream clothingFile;
-	clothingFile.open(FILE_NAME);
-
-	if (!clothingFile) {
-		cout << "ERROR: Unable to open the file " << FILE_NAME << ".\n";
+	try {
+		populateClothingPool(clothingPool, FILE_NAME);
+	}
+	catch (const runtime_error& e) {
+		cout << "ERROR: " << e.what() << "\n";
 		return 1;
 	}
 	
-	string clothingName;
-	string clothingCategory;
-	while (getline(clothingFile, clothingName)) {
-		getline(clothingFile, clothingCategory);
-
-		if (clothingCategory == "Tops") {
-			clothingPool[TOPS].push_back(Clothing(clothingName, clothingCategory));
-		}
-		else if (clothingCategory == "Bottoms") {
-			clothingPool[BOTTOMS].push_back(Clothing(clothingName, clothingCategory));
-		}
-		else if (clothingCategory == "Shoes") {
-			clothingPool[SHOES].push_back(Clothing(clothingName, clothingCategory));
-		}
-	}
-
 	// Create a map of clothing stores.
 	// Each store has an array of 3 lists for tops, bottoms, and shoes.
 	map<string, array<list<Clothing>, NUM_CATEGORIES>> clothingStores;
@@ -230,22 +241,22 @@ int main() {
 		const int MIN_CLOTHES = 1;
 		const int MAX_CLOTHES = 3;
 
-		// Add 1 to 3 tops.
+		// Add tops.
 		int numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
 		addClothes(TOPS, numClothes, store.second, clothingPool);
 
-		// Add 1 to 3 bottoms.
+		// Add bottoms.
 		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
 		addClothes(BOTTOMS, numClothes, store.second, clothingPool);
 
-		// Add 1 to 3 shoes.
+		// Add shoes.
 		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
 		addClothes(SHOES, numClothes, store.second, clothingPool);
 
 		cout << "\n";
 	}
 
-	// Before the time periods begin, call displayStock() to display the initial state of each store, showing their beginning stock
+	// Before the time periods begin, display the initial state of each store, showing their beginning stock.
 	displayStock(clothingStores);
 	cout << "\n";
 
@@ -262,16 +273,16 @@ int main() {
 
 			int probability;
 
-			// For that particular clothing store, these events have a chance of happening:
-			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
+			// For a particular clothing store, these events have a chance of happening:
+		
+			// Event 1 (60% chance) - Clothing gets restocked.
 			probability = generateRandomNum(1, 100);
-			// restockClothing(clothingStores, store.first);
 			if (probability <= 60) {
 				restockClothing(clothingStores, store.first, clothingPool);
 				somethingHappened = true;
 			}
 
-			// Event 2 (80% cnance) - Clothing gets sold. (call sellClothing)
+			// Event 2 (80% cnance) - Clothing gets sold.
 			probability = generateRandomNum(1, 100);
 			if (probability <= 80) {
 				if (sellClothing(clothingStores, store.first)) {
@@ -279,9 +290,7 @@ int main() {
 				}
 			}
 
-			// sellClothing(clothingStores, store.first);
-
-			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
+			// Event 3 (20% chance) - Clothing gets transferred between stores.
 			probability = generateRandomNum(1, 100);
 			if (probability <= 20) {
 				if (transferClothing(clothingStores, store.first)) {
@@ -292,11 +301,11 @@ int main() {
 			if (!somethingHappened) {
 				cout << "Nothing happened.\n";
 			}
-			// Whenever one of these events happen, print the change, e.g. "3 tops were added to [Clothing Store Name]".
 
 			cout << "\n";
 		}
-		// Display stock by the end of the day
+		
+		// Display the stock at the end of the day.
 		displayStock(clothingStores);
 	}
 
