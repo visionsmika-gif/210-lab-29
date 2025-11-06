@@ -34,7 +34,7 @@ void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>
 	for (int i = 0; i < NUM_CLOTHES; ++i) {
 		int index = generateRandomNum(0, (clothingPool[CAT_INDEX].size() - 1));
 		cout << "Adding " << categoryNames[CAT_INDEX] << ".\n";
-		store[TOPS].push_back(clothingPool[CAT_INDEX].at(index));
+		store[CAT_INDEX].push_back(clothingPool[CAT_INDEX].at(index));
 	}
 }
 
@@ -49,9 +49,9 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 		// For every clothing category (tops, bottoms, shoes)
 		for (int i = 0; i < NUM_CATEGORIES; ++i) {
 			const auto& category = store.second[i];	// get list for current category
-			cout << categoryNames[i] << ": ";
+			cout << ">> " << categoryNames[i] << ":\n";
 			for (const auto& clothingPiece : category) {
-				cout << clothingPiece.name << ", ";
+				cout << "\t- " << clothingPiece.name << "\n";
 			}
 			cout << "\n";
 		}
@@ -90,7 +90,7 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 // Arguments - a map of clothing stores, the name of the particular clothing store.
 // One random category (tops, bottoms, shoes) is selected and guaranteed to sell a random number of clothes
 // The other categories have a chance to sell
-void sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
+bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
 
 	// Choose a random category to sell from.
 	int categoryIndex = rand() % 3;
@@ -98,7 +98,7 @@ void sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 	// Return if that category is empty (can't sell if there's nothing)
 	auto& store = clothingStores[storeName];
 	if (store[categoryIndex].empty()) {
-		return;
+		return false;	// false - nothing sold
 	}
 
 	// Choose a random number of clothes to sell from category.	
@@ -120,6 +120,7 @@ void sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 		// but for simplicity in this mockup example, the front of the category is just sold.
 
 	}
+	return true;	// true - something sold
 }
 
 
@@ -221,25 +222,26 @@ int main() {
 			int probability;
 
 			// For that particular clothing store, these events have a chance of happening:
-			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
-			probability = rand() % 100 + 1;
+			// Event 1 (70% chance) - Clothing gets restocked. (call restockClothing)
+			probability = generateRandomNum(1, 100);
 			// restockClothing(clothingStores, store.first);
-			if (probability <= 60) {
+			if (probability <= 70) {
 				restockClothing(clothingStores, store.first, clothingPool);
 				somethingHappened = true;
 			}
 
-			// Event 2 (70% cnance) - Clothing gets sold. (call sellClothing)
-			probability = rand() % 100 + 1;
-			if (probability <= 70) {
-				sellClothing(clothingStores, store.first);
-				somethingHappened = true;
+			// Event 2 (60% cnance) - Clothing gets sold. (call sellClothing)
+			probability = generateRandomNum(1, 100);
+			if (probability <= 60) {
+				if (sellClothing(clothingStores, store.first)) {
+					somethingHappened = true;
+				}
 			}
 
 			// sellClothing(clothingStores, store.first);
 
 			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
-			probability = rand() % 100 + 1;
+			probability = generateRandomNum(1, 100);
 			if (probability <= 20) {
 				transferClothing(clothingStores, store.first);
 			}
