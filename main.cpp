@@ -132,18 +132,29 @@ bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 // Arguments - a map of clothing stores, the name of the particular clothing store
 // A random other store is chosen to be transferred to
 // A random piece of clothing from a random category is taken from the parameter store and added to the other store
-void transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
-	
-	// select a random clothing store
-	int itOffset = rand() % clothingStores.size();
+bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
+
+	// Choose a random category to transfer.
+	int catIndex = generateRandomNum(0, 2);
+
+	// If the category is empty, return without transferring.
+	auto& store = clothingStores[storeName];
+	if (store[catIndex].empty()) {
+		return false;
+	}
+
+	// Choose a random clothing store to transfer to.
+	int position = generateRandomNum(0, clothingStores.size() - 1);
 	auto it = clothingStores.begin();
-	advance(it, itOffset);
-
-
+	advance(it, position);
 
 	if (it != clothingStores.end()) {
 		cout << storeName << " transfers clothing to " << it->first << "\n";
 	}
+
+
+
+	return true;
 }
 
 int main() {
@@ -224,17 +235,17 @@ int main() {
 			int probability;
 
 			// For that particular clothing store, these events have a chance of happening:
-			// Event 1 (70% chance) - Clothing gets restocked. (call restockClothing)
+			// Event 1 (60% chance) - Clothing gets restocked. (call restockClothing)
 			probability = generateRandomNum(1, 100);
 			// restockClothing(clothingStores, store.first);
-			if (probability <= 70) {
+			if (probability <= 60) {
 				restockClothing(clothingStores, store.first, clothingPool);
 				somethingHappened = true;
 			}
 
-			// Event 2 (60% cnance) - Clothing gets sold. (call sellClothing)
+			// Event 2 (70% cnance) - Clothing gets sold. (call sellClothing)
 			probability = generateRandomNum(1, 100);
-			if (probability <= 60) {
+			if (probability <= 70) {
 				if (sellClothing(clothingStores, store.first)) {
 					somethingHappened = true;
 				}
@@ -245,7 +256,9 @@ int main() {
 			// Event 3 (20% chance) - Clothing gets transferred between stores. (call transferClothing)
 			probability = generateRandomNum(1, 100);
 			if (probability <= 20) {
-				transferClothing(clothingStores, store.first);
+				if (transferClothing(clothingStores, store.first)) {
+					somethingHappened = true;
+				}
 			}
 
 			if (!somethingHappened) {
