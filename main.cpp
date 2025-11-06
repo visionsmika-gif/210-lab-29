@@ -146,21 +146,23 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 	// Choose a random number of clothes to transfer from that category.	
 	const int MIN = 1;
 	const int MAX = 3;
-	int numClothes = generateRandomNum(1, 3);
+	int numClothes = generateRandomNum(MIN, MAX);
 
 	// Ensure we don't transfer more clothing than we have.
 	while (numClothes > thisStore[catIndex].size()) {
-		numClothes = generateRandomNum(1, 3);
+		numClothes = generateRandomNum(MIN, MAX);
 	}
 
 	// Choose a random clothing store to transfer to.
+	bool sameStore;
+	auto otherStoreIt = clothingStores.begin();
 	do {
 		int position = generateRandomNum(0, clothingStores.size() - 1);
 		auto otherStoreIt = clothingStores.begin();
 		advance(otherStoreIt, position);
-		auto& otherStore = (*otherStoreIt).second;
-	} while (otherStore == thisStore);
-
+		auto& otherStore = *otherStoreIt;
+		sameStore = (otherStore.first == storeName);
+	} while (sameStore);
 
 	// Output action.
 	if (otherStoreIt != clothingStores.end()) {
