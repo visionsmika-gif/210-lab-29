@@ -30,12 +30,11 @@ int generateRandomNum(const int MIN, const int MAX) {
 	return MIN + (rand() % (MAX - MIN + 1));
 }
 
-void addClothes(int MIN_CLOTHES, int MAX_CLOTHES, array<list<Clothing>, 3 >> &clothingStores) {
-	int numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
-	for (int i = 0; i < numClothes; ++i) {
-		int index = generateRandomNum(0, (clothingPool[TOPS].size() - 1));
+void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>, NUM_CATEGORIES>& store, const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
+	for (int i = 0; i < NUM_CLOTHES; ++i) {
+		int index = generateRandomNum(0, (clothingPool[CAT_INDEX].size() - 1));
 		cout << "Adding tops.\n";
-		store.second[TOPS].push_back(clothingPool[TOPS].at(index));
+		store[TOPS].push_back(clothingPool[CAT_INDEX].at(index));
 	}
 }
 
@@ -43,7 +42,7 @@ void addClothes(int MIN_CLOTHES, int MAX_CLOTHES, array<list<Clothing>, 3 >> &cl
 // displayStock() - Function to display store stock
 // Arguments: a map of clothing stores.
 // Goes through each map element, outputs the name of the store (map key) and the clothing stores' tops, bottoms, and shoes (map value)
-void displayStock(const map<string, array<list<Clothing>, 3>>& clothingStores) {
+void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores) {
 	cout << "Called displayStock()\n";
 
 	// For every store,
@@ -194,6 +193,9 @@ int main() {
 
 		// Add tops
 		int numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		addClothes(TOPS, numClothes, store, clothingPool);
+
+
 		for (int i = 0; i < numClothes; ++i) {
 			int index = generateRandomNum(0, (clothingPool[TOPS].size() - 1));
 			cout << "Adding tops.\n";
