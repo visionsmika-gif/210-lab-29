@@ -6,7 +6,7 @@ I can unit test the following functions:
 * sellClothing
 * transferClothing
 
-First I will separate the functions into a header file with an implementation file and include the header file in the unit test program.
+First I will separate the functions into a header file and include the header file in the unit test program.
 
 For populateClothingPool(), I will read from the file clothing.txt() and ensure that the clothing pool contains the expected clothing
 in each of its categories (i.e. Tops are only put into the 'Top' category, Bottoms are only put into the 'Bottoms' category, and so on).
