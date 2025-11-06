@@ -44,19 +44,23 @@ void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>
 void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores) {
 	// For every store,
 	for (const auto& store : clothingStores) {
-		cout << "Now displaying stock for " << store.first << ":\n";
+		cout << "[ STOCK REPORT for " << store.first << " ]\n";
 
 		// For every clothing category (tops, bottoms, shoes)
 		for (int i = 0; i < NUM_CATEGORIES; ++i) {
 			const auto& category = store.second[i];	// get list for current category
 			cout << ">> " << categoryNames[i] << ":\n";
-			for (const auto& clothingPiece : category) {
-				cout << "\t- " << clothingPiece.name << "\n";
+			if (store.second[i].empty()) {
+				cout << "OUT OF STOCK\n";
 			}
-			cout << "\n";
+			else {
+				for (const auto& clothingPiece : category) {
+					cout << "\t- " << clothingPiece.name << "\n";
+				}
+			}
 		}
+		cout << "\n";
 	}
-	cout << "End of displayStock()\n";
 }
 
 // restockClothing() - Function to add new clothing to a particular store
@@ -66,23 +70,19 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 					const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
 	
 	// Choose a random category to be added to.
-	int categoryIndex = rand() % 3;
+	int catIndex = rand() % 3;
 
 	// Choose a random number of clothes to add to that category.
 	const int MIN = 1;
 	const int MAX = 3;
-	int randomNum = MIN + (rand() % (MAX - MIN + 1));	// Random number between 1-3
+	int numClothes = MIN + (rand() % (MAX - MIN + 1));	// Random number between 1-3
 
-	cout << randomNum << " " << categoryNames[categoryIndex] << " have been restocked\n";
+	cout << numClothes << " " << categoryNames[catIndex] << " have been restocked\n";
 
 
 	// Add clothes to that category.
-	for (int i = 0; i < randomNum; ++i) {
-		auto& store = clothingStores[storeName];							// access particular store
-		store[categoryIndex].push_back(clothingPool[categoryIndex].at(0));	// access particular store's category and add a new element
-		// In the real code, a random index for a random clothing piece in clothingPool would be chosen,
-		// but for simplicity in this mockup example, the index is just 0.
-	}
+	auto& store = clothingStores[storeName];
+	addClothes(catIndex, numClothes, store, clothingPool);
 }
 
 
