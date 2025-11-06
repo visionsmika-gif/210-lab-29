@@ -9,6 +9,7 @@
 #include <string>
 #include <ctime>	// for seed
 #include <cstdlib>	// for RNG
+#include <fstream>
 
 using namespace std;
 
@@ -132,14 +133,25 @@ void transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 	}
 }
 
-
-// Define main function
 int main() {
 	srand(time(0));
-
-	// Open external file 
-	cout << "Opening file...\n";
 	array<vector<Clothing>, 3> clothingPool;
+
+	const string FILE_NAME = "clothing.txt";
+	ifstream clothingFile;
+	clothingFile.open(FILE_NAME);
+
+	if (!clothingFile) {
+		cout << "ERROR: Unable to open the file " << FILE_NAME << ".\n";
+		return 1;
+	}
+	
+	string clothingName;
+	string clothingCategory;
+	while (getline(clothingFile, clothingName)) {
+		getline(clothingFile, clothingCategory);
+	}
+
 
 		// If the file does not open, print an error and exit
 		// Read at least 100 pieces of clothing from a file, extracting its data, and storing into three vectors (depending on if it's a top, bottom, or shoes)
