@@ -33,18 +33,15 @@ int generateRandomNum(const int MIN, const int MAX) {
 void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>, NUM_CATEGORIES>& store, const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
 	for (int i = 0; i < NUM_CLOTHES; ++i) {
 		int index = generateRandomNum(0, (clothingPool[CAT_INDEX].size() - 1));
-		cout << "Adding tops.\n";
+		cout << "Adding " << categoryNames[CAT_INDEX] << ".\n";
 		store[TOPS].push_back(clothingPool[CAT_INDEX].at(index));
 	}
 }
-
 
 // displayStock() - Function to display store stock
 // Arguments: a map of clothing stores.
 // Goes through each map element, outputs the name of the store (map key) and the clothing stores' tops, bottoms, and shoes (map value)
 void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores) {
-	cout << "Called displayStock()\n";
-
 	// For every store,
 	for (const auto& store : clothingStores) {
 		cout << "Now displaying stock for " << store.first << ":\n";
@@ -178,45 +175,31 @@ int main() {
 	// Create a map of clothing stores.
 	// Each store has an array of 3 lists for tops, bottoms, and shoes.
 	map<string, array<list<Clothing>, NUM_CATEGORIES>> clothingStores;
+	clothingStores["Aesthetic Apparel"];
 	clothingStores["Bubbly Boutique"];
 	clothingStores["Casual Couture"];
-	clothingStores["Aesthetic Apparel"];
 
 	// Initialize each store.
 	for (auto& store : clothingStores) {
 		// Output current store name.
 		cout << "Initializing " << store.first << ":\n";
 
-		// Each store will start with 1-3 clothing pieces per category.
+		// Each store will start with 1 to 3 clothing pieces per category.
 		const int MIN_CLOTHES = 1;
 		const int MAX_CLOTHES = 3;
 
-		// Add tops
+		// Add 1 to 3 tops.
 		int numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
-		addClothes(TOPS, numClothes, store, clothingPool);
+		addClothes(TOPS, numClothes, store.second, clothingPool);
 
-
-		for (int i = 0; i < numClothes; ++i) {
-			int index = generateRandomNum(0, (clothingPool[TOPS].size() - 1));
-			cout << "Adding tops.\n";
-			store.second[TOPS].push_back(clothingPool[TOPS].at(index));
-		}
-
-		// Add bottoms
+		// Add 1 to 3 bottoms.
 		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
-		for (int i = 0; i < numClothes; ++i) {
-			int index = generateRandomNum(0, (clothingPool[TOPS].size() - 1));
-			cout << "Adding bottoms.\n";
-			store.second[BOTTOMS].push_back(clothingPool[BOTTOMS].at(index));
-		}
+		addClothes(BOTTOMS, numClothes, store.second, clothingPool);
 
-		// Add a random number of shoes from the vector of shoes
+		// Add 1 to 3 shoes.
 		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
-		for (int i = 0; i < numClothes; ++i) {
-			int index = generateRandomNum(0, (clothingPool[TOPS].size() - 1));
-			cout << "Adding shoes.\n";
-			store.second[SHOES].push_back(clothingPool[SHOES].at(index));
-		}
+		addClothes(SHOES, numClothes, store.second, clothingPool);
+
 		cout << "\n";
 	}
 
