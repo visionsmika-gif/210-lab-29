@@ -23,3 +23,6 @@ lost one item from the correct category, while the other store correctly gained 
 
 I will use displayStock() between each of the above functions to ensure that they executed correctly, as well as to ensure that the stock is
 displayed correctly.
+
+...
+...
