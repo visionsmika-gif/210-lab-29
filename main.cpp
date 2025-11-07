@@ -13,23 +13,23 @@
 
 using namespace std;
 
-// Define constants and enums
+// Define constants and enums.
 enum ClothingCategories { TOPS, BOTTOMS, SHOES };						// Indexes for clothing categories
 const int NUM_CATEGORIES = 3;											// Number of categories
 string categoryNames[NUM_CATEGORIES] = { "Tops", "Bottoms", "Shoes"};	// Names of categories
 const int NUM_DAYS = 25;												// Number of simulation days
 
-// Define a struct representing a single clothing piece
+// Define a struct representing a single clothing piece.
 struct Clothing {
 	string name;
 	string category;	// "Tops", "Bottoms", or "Shoes"
 	Clothing(string n, string c) : name(n), category(c) {}
 };
 
-// Function to generate a random number between MIN and MAX inclusive
+// Function to generate a random number between MIN and MAX inclusive.
 int generateRandomNum(const int MIN, const int MAX);
 
-// Function to add a certain number of clothes to a given category in a store
+// Function to add a certain number of clothes to a given category in a store.
 void addClothes(
 	const int CAT_INDEX,													// Arg 1 - the index for which category to add to
 	const int NUM_CLOTHES,													// Arg 2 - the number of clothes to add
@@ -37,26 +37,26 @@ void addClothes(
 	const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool				// Arg 5 - the pool of possible clothing to choose from when adding
 );
 
-// Function to read pieces of clothing from a file and store it into a vector
+// Function to read pieces of clothing from a file and store it into the vector clothingPool.
 void populateClothingPool(array<vector<Clothing>, NUM_CATEGORIES>& clothingPool, const string FILE_NAME);
 
-// Function to display the stock of all clothing stores
+// Function to display the stock of all clothing stores.
 void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores);
 
-// Function to add new clothing to a particular store
+// Function to add new clothing to a particular store.
 void restockClothing(
 	map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores,		// Arg 1 - a map of clothing stores
 	const string& storeName,												// Arg 2 - the name of the clothing store to restock
 	const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool				// Arg 3 - a pool of possible clothing that can be restocked
 );
 
-// Function to sell clothing from a particular store
+// Function to sell clothing from a particular store.
 bool sellClothing(
 	map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores,		// Arg 1 - a map of clothing stores
 	const string& storeName													// Arg 2 - the name of the clothing store to sell from
 );
 
-// Function to transfer clothing from one store to another
+// Function to transfer clothing from one store to another.
 bool transferClothing(
 	map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores,		// Arg 1 - a map of clothing stores
 	const string& storeName													// Arg 2 - the name of the clothing store to transfer from
@@ -64,9 +64,9 @@ bool transferClothing(
 
 int main() {
 	srand(time(0));
-	array<vector<Clothing>, 3> clothingPool;
+	array<vector<Clothing>, NUM_CATEGORIES> clothingPool;
 
-	// Read file into clothingPool.
+	// Read file to populate clothingPool.
 	const string FILE_NAME = "clothing.txt";
 	try {
 		populateClothingPool(clothingPool, FILE_NAME);
@@ -85,46 +85,45 @@ int main() {
 
 	// Initialize each store.
 	for (auto& store : clothingStores) {
-		// Output current store name.
-		cout << "Initializing " << store.first << ":\n";
-
 		// Each store will start with 1 to 3 clothing pieces per category.
-		const int MIN_CLOTHES = 1;
-		const int MAX_CLOTHES = 3;
+		const int MIN = 1;
+		const int MAX = 3;
 
 		// Add tops.
-		int numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		int numClothes = generateRandomNum(MIN, MAX);
 		addClothes(TOPS, numClothes, store.second, clothingPool);
 
 		// Add bottoms.
-		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		numClothes = generateRandomNum(MIN, MAX);
 		addClothes(BOTTOMS, numClothes, store.second, clothingPool);
 
 		// Add shoes.
-		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		numClothes = generateRandomNum(MIN, MAX);
 		addClothes(SHOES, numClothes, store.second, clothingPool);
-
-		cout << "\n";
 	}
 
 	// Before the time periods begin, display the initial state of each store, showing their beginning stock.
+	cout << "INITIAL STOCK:\n\n";
 	displayStock(clothingStores);
 	cout << "\n";
 
-	// Begin a time-based simulation for clothing store changes:
+	// Begin a time-based simulation for clothing store changes.
 	cout << "Now beginning time intervals.\n";
+
 	// For 25 time intervals:
 	for (int i = 1; i <= NUM_DAYS; ++i) {
+		// Output the current day number.
 		cout << "\n--- DAY " << i << " ---\n";
+
 		// Iterate through each clothing store.
 		for (const auto& store : clothingStores) {
 			bool somethingHappened = false;
-
-			cout << "At " << store.first << ":\n";
-
 			int probability;
 
-			// For a particular clothing store, these events have a chance of happening:
+			// Output the current store name.
+			cout << "At " << store.first << ":\n";
+
+			// At a particular clothing store, these events have a chance of happening:
 		
 			// Event 1 (60% chance) - Clothing gets restocked.
 			probability = generateRandomNum(1, 100);
@@ -149,6 +148,7 @@ int main() {
 				}
 			}
 
+			// If nothing happened at this particular clothing store, output that nothing happened.
 			if (!somethingHappened) {
 				cout << "Nothing happened.\n";
 			}
@@ -190,13 +190,13 @@ void populateClothingPool(array<vector<Clothing>, NUM_CATEGORIES>& clothingPool,
 	while (getline(clothingFile, clothingName)) {
 		getline(clothingFile, clothingCategory);
 
-		if (clothingCategory == "Tops") {
+		if (clothingCategory == categoryNames[TOPS]) {
 			clothingPool[TOPS].push_back(Clothing(clothingName, clothingCategory));
 		}
-		else if (clothingCategory == "Bottoms") {
+		else if (clothingCategory == categoryNames[BOTTOMS]) {
 			clothingPool[BOTTOMS].push_back(Clothing(clothingName, clothingCategory));
 		}
-		else if (clothingCategory == "Shoes") {
+		else if (clothingCategory == categoryNames[SHOES]) {
 			clothingPool[SHOES].push_back(Clothing(clothingName, clothingCategory));
 		}
 	}
