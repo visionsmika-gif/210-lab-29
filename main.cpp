@@ -214,12 +214,13 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 	for (const auto& store : clothingStores) {
 		cout << "[ STOCK REPORT for " << store.first << " ]\n";
 
-		// Print the categories header
+		// Print the categories header.
 		for (int i = 0; i < NUM_CATEGORIES; ++i) {
 			cout << left << setw(ROW_WIDTH) << categoryNames[i];
 		}
+		cout << "\n";
 
-		// Find the category with the longest column
+		// Find the category with the longest column.
 		int greatestNumRows = 0;
 		for (int i = 0; i < NUM_CATEGORIES; ++i) {
 			const auto& category = store.second[i];
@@ -228,17 +229,27 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 				greatestNumRows = category.size();
 			}
 		}
+		
+		// Go through each row.
+		for (int row = 0; row < greatestNumRows; ++row) {
+			// Go through each column.
+			for (int column = 0; column < NUM_CATEGORIES; ++column) {
+				// Get the current category's list.
+				const auto& category = store.second[column];
 
-		// Go through each row
-		for (int i = 0; i < greatestNumRows; ++i) {
-			// Go through each column
-			for (int j = 0; j < NUM_CATEGORIES; ++j) {
-				// Get the current category's list
-				const auto& category = store.second[j];
+				auto it = category.begin();
 
-				// Print the correct item in that list
-				// Print nothing if it's a blank cell
+				// Go to the particular row we want to print.
+				if (row < category.size()) {	// Ensure we don't go to a row that's past the end of the list.
+					advance(it, row);
+					cout << left << setw(ROW_WIDTH) << it->name;
+				}
+				else {	// If the current row is past the end of the list, there's nothing left in this category to print.
+					// Print a blank cell
+					cout << left << setw(ROW_WIDTH) << "";
+				}
 			}
+			cout << "\n";
 		}
 
 
@@ -258,7 +269,7 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 			}
 		}
 		*/
-		cout << "\n";
+		// cout << "\n";
 	}
 
 
