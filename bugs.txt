@@ -1,10 +1,17 @@
-1)
+1) In the sellClothing() function, when attempting to generate a random index for a clothing category, I called generateRandomNum() with arguments 0, 3.
+I had meant to call generateRandomNum() with argument 0, 2, to randomly generate either 0, 1, or 2. This caused the out of bounds access whenever
+an index of 3 was generated (which was too large). I fixed this issue by changing the arguments to 0 and 2.
 
-2)
+2) Sometimes, transferClothing() would have a store transfer to itself. I fixed this by adding a comparison between this store's name and the other store's
+name. A loop will continue to choose a new store as long those names are equal, ensuring that a store chooses a different store to transfer to, and not itself.
 
-3)
+3) In the transferClothing() function, I accidentally declared auto otherStoreIt twice---once before the loop and another time inside the loop. This hid
+the actual otherStoreIt that I wanted to advance inside of the loop, causing the loop to go on and on, and causing the daily time intervals to stop early.
+To fix this I had to remove the 'auto' keyword inside the loop to not accidentally declare otherStoreIt a second time.
 
-4)
+4) In populateClothingPool(), I unintentionally pushed clothing that was meant to be in the "Shoes" category to "Tops" instead. This was because I copy and pasted
+the branch used for adding "Tops" and reused it for adding "Shoes," forgetting to change the index from 'TOPS' to 'SHOES.' To fix this, I simply changed that index
+to 'SHOES.'
 
 5)
 

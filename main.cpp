@@ -251,7 +251,6 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 
 // Function to sell clothing from a particular store.
 bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
-
 	// Choose a random category to sell from.
 	int catIndex = generateRandomNum(0, 2);
 
@@ -289,14 +288,13 @@ bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 
 // Function to transfer clothing from one store to another.
 bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName) {
-
-	// Choose a random category to transfer.
+	// Choose a random category to transfer between.
 	int catIndex = generateRandomNum(0, 2);
 
-	// If the category is empty, return without transferring.
+	// If that category is empty, return without transferring.
 	auto& thisStore = clothingStores[storeName];
 	if (thisStore[catIndex].empty()) {
-		return false;
+		return false;	// False - nothing transferred
 	}
 
 	// Choose a random number of clothes to transfer from that category.	
@@ -339,5 +337,5 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 		otherStoreIt->second[catIndex].push_back(transferredPiece);
 	}
 
-	return true;
+	return true;	// True - something transferred
 }
