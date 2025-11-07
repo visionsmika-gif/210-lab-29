@@ -106,15 +106,15 @@ int main() {
 	// Before the time periods begin, display the initial state of each store, showing their beginning stock.
 	cout << "INITIAL STOCK:\n\n";
 	displayStock(clothingStores);
-	cout << "\n";
 
 	// Begin a time-based simulation for clothing store changes.
 	cout << "Now beginning time intervals.\n";
 
 	// For 25 time intervals:
 	for (int i = 1; i <= NUM_DAYS; ++i) {
+		const int LINE_WIDTH = 30;
 		// Output the current day number.
-		cout << "\n--- DAY " << i << " ---\n";
+		cout << "\n" << string(LINE_WIDTH, '-') << " DAY " << i << " " << string(LINE_WIDTH, '-') << "\n";
 
 		// Iterate through each clothing store.
 		for (const auto& store : clothingStores) {
@@ -208,15 +208,17 @@ void populateClothingPool(array<vector<Clothing>, NUM_CATEGORIES>& clothingPool,
 
 // Function to display the stock of all clothing stores.
 void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores) {
-	const int ROW_WIDTH = 30;
+	const int ROW_WIDTH = 35;
+	const int LINE_WIDTH = 108;
 	
 	// For every store,
 	for (const auto& store : clothingStores) {
 		cout << "[ STOCK REPORT for " << store.first << " ]\n";
+		cout << string(LINE_WIDTH, '-') << "\n";
 
 		// Print the categories header.
 		for (int i = 0; i < NUM_CATEGORIES; ++i) {
-			cout << left << setw(ROW_WIDTH) << categoryNames[i];
+			cout << left << setw(ROW_WIDTH) << categoryNames[i] << "|";
 		}
 		cout << "\n";
 
@@ -242,34 +244,18 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 				// Go to the particular row we want to print.
 				if (row < category.size()) {	// Ensure we don't go to a row that's past the end of the list.
 					advance(it, row);
-					cout << left << setw(ROW_WIDTH) << it->name;
+					cout << left << setw(ROW_WIDTH) << it->name << "|";
 				}
 				else {	// If the current row is past the end of the list, there's nothing left in this category to print.
 					// Print a blank cell
-					cout << left << setw(ROW_WIDTH) << "";
+					cout << left << setw(ROW_WIDTH) << "" << "|";
 				}
 			}
 			cout << "\n";
 		}
 
-
-		/*
-		// For every clothing category (tops, bottoms, shoes)
-		for (int i = 0; i < NUM_CATEGORIES; ++i) {
-			const auto& category = store.second[i];	// get list for current category
-			cout << ">> " << categoryNames[i] << ": ";
-			if (store.second[i].empty()) {
-				cout << "OUT OF STOCK\n";
-			}
-			else {
-				cout << "\n";
-				for (const auto& clothingPiece : category) {
-					cout << "\t- " << clothingPiece.name << "\n";
-				}
-			}
-		}
-		*/
-		// cout << "\n";
+		cout << string(LINE_WIDTH, '-') << "\n";
+		cout << "\n";
 	}
 
 
