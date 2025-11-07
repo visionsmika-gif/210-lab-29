@@ -112,9 +112,9 @@ int main() {
 
 	// For 25 time intervals:
 	for (int i = 1; i <= NUM_DAYS; ++i) {
-		const int LINE_WIDTH = 30;
+		const int LINE_WIDTH = 15;
 		// Output the current day number.
-		cout << "\n" << string(LINE_WIDTH, '-') << " DAY " << i << " " << string(LINE_WIDTH, '-') << "\n";
+		cout << "\n" << string(LINE_WIDTH, '=') << " DAY " << i << " " << string(LINE_WIDTH, '=') << "\n";
 
 		// Iterate through each clothing store.
 		for (const auto& store : clothingStores) {
@@ -159,6 +159,9 @@ int main() {
 		
 		// Display the stock at the end of the day.
 		displayStock(clothingStores);
+
+		// Pause between time intervals.
+		system("PAUSE");
 	}
 
 	return 0;
@@ -257,30 +260,6 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 		cout << string(LINE_WIDTH, '-') << "\n";
 		cout << "\n";
 	}
-
-
-	/*
-	// For every store,
-	for (const auto& store : clothingStores) {
-		cout << "[ STOCK REPORT for " << store.first << " ]\n";
-
-		// For every clothing category (tops, bottoms, shoes)
-		for (int i = 0; i < NUM_CATEGORIES; ++i) {
-			const auto& category = store.second[i];	// get list for current category
-			cout << ">> " << categoryNames[i] << ": ";
-			if (store.second[i].empty()) {
-				cout << "OUT OF STOCK\n";
-			}
-			else {
-				cout << "\n";
-				for (const auto& clothingPiece : category) {
-					cout << "\t- " << clothingPiece.name << "\n";
-				}
-			}
-		}
-		cout << "\n";
-	}
-	*/
 }
 
 // Function to add new clothing to a particular store.
@@ -296,7 +275,7 @@ void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothin
 	int numClothes = generateRandomNum(MIN, MAX);
 
 	// Output action.
-	cout << numClothes << " " << categoryNames[catIndex] << " get restocked\n";
+	cout << numClothes << " " << categoryNames[catIndex] << " get restocked.\n";
 
 	// Add clothes to that category.
 	auto& store = clothingStores[storeName];
@@ -325,7 +304,7 @@ bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingSt
 	}
 
 	// Output action.
-	cout << randomNum << " " << categoryNames[catIndex] << " get sold\n";
+	cout << randomNum << " " << categoryNames[catIndex] << " get sold.\n";
 
 	// Sell clothes from that category.
 	for (int i = 0; i < randomNum; ++i) {
