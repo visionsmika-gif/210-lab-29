@@ -1,3 +1,6 @@
+// COMSC-210 | Labs 29-31 | Mika Aquino
+// IDE used: Visual Studio 2022
+
 #include <iostream>
 #include <map>
 #include <array>
@@ -11,10 +14,10 @@
 using namespace std;
 
 // Define constants and enums
-enum ClothingCategories { TOPS, BOTTOMS, SHOES };
-const int NUM_CATEGORIES = 3;
-string categoryNames[NUM_CATEGORIES] = { "Tops", "Bottoms", "Shoes"};
-const int NUM_DAYS = 25;
+enum ClothingCategories { TOPS, BOTTOMS, SHOES };						// Indexes for clothing categories
+const int NUM_CATEGORIES = 3;											// Number of categories
+string categoryNames[NUM_CATEGORIES] = { "Tops", "Bottoms", "Shoes"};	// Names of categories
+const int NUM_DAYS = 25;												// Number of simulation days
 
 // Define a struct representing a single clothing piece
 struct Clothing {
@@ -27,7 +30,12 @@ struct Clothing {
 int generateRandomNum(const int MIN, const int MAX);
 
 // Function to add a certain number of clothes to a given category in a store
-void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>, NUM_CATEGORIES>& store, const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool);
+void addClothes(
+	const int CAT_INDEX,													// Arg 1 - the index for which category to add to
+	const int NUM_CLOTHES,													// Arg 2 - the number of clothes to add
+	array<list<Clothing>, NUM_CATEGORIES>& store,							// Arg 3 - an array representing the particular store to add to
+	const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool				// Arg 5 - the pool of possible clothing to choose from when adding
+);
 
 // Function to read pieces of clothing from a file and store it into a vector
 void populateClothingPool(array<vector<Clothing>, NUM_CATEGORIES>& clothingPool, const string FILE_NAME);
@@ -38,20 +46,21 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 // Function to add new clothing to a particular store
 void restockClothing(
 	map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores,		// Arg 1 - a map of clothing stores
-	const string& storeName,												// Arg 2 - the name of the clothing store to sell from
+	const string& storeName,												// Arg 2 - the name of the clothing store to restock
 	const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool				// Arg 3 - a pool of possible clothing that can be restocked
 );
 
-// sellClothing() - Function to sell clothing from a particular store
-// Arguments - a map of clothing stores, the name of the particular clothing store.
-// One random category (tops, bottoms, shoes) is selected and guaranteed to sell a random number of clothes
-// The other categories have a chance to sell
-bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName);
-// transferClothing() - Function to transfer clothing between two stores
-// Arguments - a map of clothing stores, the name of the particular clothing store
-// A random other store is chosen to be transferred to
-// A random piece of clothing from a random category is taken from the parameter store and added to the other store
-bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName);
+// Function to sell clothing from a particular store
+bool sellClothing(
+	map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores,		// Arg 1 - a map of clothing stores
+	const string& storeName													// Arg 2 - the name of the clothing store to sell from
+);
+
+// Function to transfer clothing from one store to another
+bool transferClothing(
+	map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores,		// Arg 1 - a map of clothing stores
+	const string& storeName													// Arg 2 - the name of the clothing store to transfer from
+);
 
 int main() {
 	srand(time(0));
@@ -68,7 +77,7 @@ int main() {
 	}
 	
 	// Create a map of clothing stores.
-	// Each store has an array of 3 lists for tops, bottoms, and shoes.
+	// Each store has an array of 3 lists for Tops, Bottoms, and Shoes.
 	map<string, array<list<Clothing>, NUM_CATEGORIES>> clothingStores;
 	clothingStores["Aesthetic Apparel"];
 	clothingStores["Bubbly Boutique"];
