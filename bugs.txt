@@ -1,0 +1,37 @@
+1) In the sellClothing() function, when attempting to generate a random index for a clothing category, I called generateRandomNum() with arguments 0, 3.
+I had meant to call generateRandomNum() with argument 0, 2, to randomly generate either 0, 1, or 2. This caused the out of bounds access whenever
+an index of 3 was generated (which was too large). I fixed this issue by changing the arguments to 0 and 2.
+
+2) Sometimes, transferClothing() would have a store transfer to itself. I fixed this by adding a comparison between this store's name and the other store's
+name. A loop will continue to choose a new store as long those names are equal, ensuring that a store chooses a different store to transfer to, and not itself.
+
+3) In the transferClothing() function, I accidentally declared auto otherStoreIt twice---once before the loop and another time inside the loop. This hid
+the actual otherStoreIt that I wanted to advance inside of the loop, causing the loop to go on and on, and causing the daily time intervals to stop early.
+To fix this I had to remove the 'auto' keyword inside the loop to not accidentally declare otherStoreIt a second time.
+
+4) In populateClothingPool(), I unintentionally pushed clothing that was meant to be in the "Shoes" category to "Tops" instead. This was because I copy and pasted
+the branch used for adding "Tops" and reused it for adding "Shoes," forgetting to change the index from 'TOPS' to 'SHOES.' To fix this, I simply changed the index
+to 'SHOES' to add the clothes to the proper list.
+
+5) In the main function, when generating a 'probability' variable, I accidentally generated a random number between 1-60, and not between 1-100. This meant that
+when I checked if probability <= 60, the condition was always true, and the event would always happen, when there was only meant to be a 60% chance that it would
+happen. I fixed this by changing the RNG from 1-60 to 1-100.
+
+6) In sellClothing(), the function would generate a random number of clothing to sell, but sometimes that number would be more than the number of clothing
+that the store had in the chosen category. I fixed this by making the function continuously generate a new number until it was less than or equal to the store's
+amount of clothing in that category.
+
+7) There was a minor output bug in displayStock() where I printed the newline in the wrong section of the loop. I meant to print it between each clothing store,
+but instead I printed it after each clothing category. I fixed this by printing a newline in the outer loop instead.
+
+8) In displayStock(), I originally printed each category name by accessing the first element of that list using .front(), and then accessing that Clothing element's
+"category" attribute. However, this meant that .front() would sometimes be called on an empty list whenever there were no pieces of clothing in that category
+(i.e. if it were out of stock). So, I had to change the implementation to use a for-loop (instead of a range-based for loop), so that I could have an index i.
+Then, I could access the name of the current category using the categoryNames array and the index i.
+
+9) There was a small error where the time intervals started at Day 0 and went up to Day 24, when it was supposed to start at Day 1 and go up to Day 25. I simply
+changed the time-interval loop so that it started at i = 0 and iterated until it was less than or equal to NUM_DAYS.
+
+10) Sometimes nothing would happen at a store after a time interval, but "Nothing happened" would fail to print. This would occur when sellClothing() or
+transferClothing() was called, but the function returned before anything was sold/transferred because the store didn't have any clothing to sell or transfer.
+So, I changed these functions to return a bool. They would return false if the stores were empty and they sold/transferred nothing.
