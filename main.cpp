@@ -1,30 +1,159 @@
-// PSEUDOCODE COMMENTS AND MOCKUP:
-
-// Include headers for files, data structures, etc
 #include <iostream>
 #include <map>
 #include <array>
 #include <list>
 #include <vector>
 #include <string>
-#include <ctime>	// for seed
-#include <cstdlib>	// for RNG
+#include <ctime>
+#include <cstdlib>
 #include <fstream>
 
 using namespace std;
 
-// Define constants for the number of simulation days, the number of stores, the name of each store, the name of each clothing category (top, bottom, or shoes)
+// Define constants and enums
 enum ClothingCategories { TOPS, BOTTOMS, SHOES };
 const int NUM_CATEGORIES = 3;
 string categoryNames[NUM_CATEGORIES] = { "Tops", "Bottoms", "Shoes"};
 const int NUM_DAYS = 25;
 
-// Define a struct for a single clothing piece, containing the clothing piece's name and category (top, bottom, or shoes)
+// Define a struct representing a single clothing piece
 struct Clothing {
 	string name;
 	string category;	// "Tops", "Bottoms", or "Shoes"
 	Clothing(string n, string c) : name(n), category(c) {}
 };
+
+// Function to generate a random number between MIN and MAX inclusive
+int generateRandomNum(const int MIN, const int MAX);
+
+// Function to add a certain number of clothes to a given category in a store
+void addClothes(const int CAT_INDEX, const int NUM_CLOTHES, array<list<Clothing>, NUM_CATEGORIES>& store, const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool);
+
+// Function to read pieces of clothing from a file and store it into a vector
+void populateClothingPool(array<vector<Clothing>, NUM_CATEGORIES>& clothingPool, const string FILE_NAME);
+
+// Function to display the stock of all clothing stores
+void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores);
+
+// Function to add new clothing to a particular store
+void restockClothing(
+	map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores,		// Arg 1 - a map of clothing stores
+	const string& storeName,												// Arg 2 - the name of the clothing store to sell from
+	const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool				// Arg 3 - a pool of possible clothing that can be restocked
+);
+
+// sellClothing() - Function to sell clothing from a particular store
+// Arguments - a map of clothing stores, the name of the particular clothing store.
+// One random category (tops, bottoms, shoes) is selected and guaranteed to sell a random number of clothes
+// The other categories have a chance to sell
+bool sellClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName);
+// transferClothing() - Function to transfer clothing between two stores
+// Arguments - a map of clothing stores, the name of the particular clothing store
+// A random other store is chosen to be transferred to
+// A random piece of clothing from a random category is taken from the parameter store and added to the other store
+bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName);
+
+int main() {
+	srand(time(0));
+	array<vector<Clothing>, 3> clothingPool;
+
+	// Read file into clothingPool.
+	const string FILE_NAME = "clothing.txt";
+	try {
+		populateClothingPool(clothingPool, FILE_NAME);
+	}
+	catch (const runtime_error& e) {
+		cout << "ERROR: " << e.what() << "\n";
+		return 1;
+	}
+	
+	// Create a map of clothing stores.
+	// Each store has an array of 3 lists for tops, bottoms, and shoes.
+	map<string, array<list<Clothing>, NUM_CATEGORIES>> clothingStores;
+	clothingStores["Aesthetic Apparel"];
+	clothingStores["Bubbly Boutique"];
+	clothingStores["Casual Couture"];
+
+	// Initialize each store.
+	for (auto& store : clothingStores) {
+		// Output current store name.
+		cout << "Initializing " << store.first << ":\n";
+
+		// Each store will start with 1 to 3 clothing pieces per category.
+		const int MIN_CLOTHES = 1;
+		const int MAX_CLOTHES = 3;
+
+		// Add tops.
+		int numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		addClothes(TOPS, numClothes, store.second, clothingPool);
+
+		// Add bottoms.
+		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		addClothes(BOTTOMS, numClothes, store.second, clothingPool);
+
+		// Add shoes.
+		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
+		addClothes(SHOES, numClothes, store.second, clothingPool);
+
+		cout << "\n";
+	}
+
+	// Before the time periods begin, display the initial state of each store, showing their beginning stock.
+	displayStock(clothingStores);
+	cout << "\n";
+
+	// Begin a time-based simulation for clothing store changes:
+	cout << "Now beginning time intervals.\n";
+	// For 25 time intervals:
+	for (int i = 1; i <= NUM_DAYS; ++i) {
+		cout << "\n--- DAY " << i << " ---\n";
+		// Iterate through each clothing store.
+		for (const auto& store : clothingStores) {
+			bool somethingHappened = false;
+
+			cout << "At " << store.first << ":\n";
+
+			int probability;
+
+			// For a particular clothing store, these events have a chance of happening:
+		
+			// Event 1 (60% chance) - Clothing gets restocked.
+			probability = generateRandomNum(1, 100);
+			if (probability <= 60) {
+				restockClothing(clothingStores, store.first, clothingPool);
+				somethingHappened = true;
+			}
+
+			// Event 2 (80% cnance) - Clothing gets sold.
+			probability = generateRandomNum(1, 100);
+			if (probability <= 80) {
+				if (sellClothing(clothingStores, store.first)) {
+					somethingHappened = true;
+				}
+			}
+
+			// Event 3 (20% chance) - Clothing gets transferred between stores.
+			probability = generateRandomNum(1, 100);
+			if (probability <= 20) {
+				if (transferClothing(clothingStores, store.first)) {
+					somethingHappened = true;
+				}
+			}
+
+			if (!somethingHappened) {
+				cout << "Nothing happened.\n";
+			}
+
+			cout << "\n";
+		}
+		
+		// Display the stock at the end of the day.
+		displayStock(clothingStores);
+	}
+
+	return 0;
+}
+
 
 int generateRandomNum(const int MIN, const int MAX) {
 	return MIN + (rand() % (MAX - MIN + 1));
@@ -96,8 +225,8 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 // Arguments: a map of clothing stores, the name of the particular clothing store, the three vectors for tops, bottoms, and shoes.
 // One random category (tops, bottoms, shoes) is selected restocked with a random number of clothes
 void restockClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores, const string& storeName,
-					const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
-	
+	const array<vector<Clothing>, NUM_CATEGORIES>& clothingPool) {
+
 	// Choose a random category to be added to.
 	int catIndex = rand() % 3;
 
@@ -209,105 +338,4 @@ bool transferClothing(map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothi
 	}
 
 	return true;
-}
-
-int main() {
-	srand(time(0));
-	array<vector<Clothing>, 3> clothingPool;
-
-	// Read file into clothingPool.
-	const string FILE_NAME = "clothing.txt";
-	try {
-		populateClothingPool(clothingPool, FILE_NAME);
-	}
-	catch (const runtime_error& e) {
-		cout << "ERROR: " << e.what() << "\n";
-		return 1;
-	}
-	
-	// Create a map of clothing stores.
-	// Each store has an array of 3 lists for tops, bottoms, and shoes.
-	map<string, array<list<Clothing>, NUM_CATEGORIES>> clothingStores;
-	clothingStores["Aesthetic Apparel"];
-	clothingStores["Bubbly Boutique"];
-	clothingStores["Casual Couture"];
-
-	// Initialize each store.
-	for (auto& store : clothingStores) {
-		// Output current store name.
-		cout << "Initializing " << store.first << ":\n";
-
-		// Each store will start with 1 to 3 clothing pieces per category.
-		const int MIN_CLOTHES = 1;
-		const int MAX_CLOTHES = 3;
-
-		// Add tops.
-		int numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
-		addClothes(TOPS, numClothes, store.second, clothingPool);
-
-		// Add bottoms.
-		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
-		addClothes(BOTTOMS, numClothes, store.second, clothingPool);
-
-		// Add shoes.
-		numClothes = generateRandomNum(MIN_CLOTHES, MAX_CLOTHES);
-		addClothes(SHOES, numClothes, store.second, clothingPool);
-
-		cout << "\n";
-	}
-
-	// Before the time periods begin, display the initial state of each store, showing their beginning stock.
-	displayStock(clothingStores);
-	cout << "\n";
-
-	// Begin a time-based simulation for clothing store changes:
-	cout << "Now beginning time intervals.\n";
-	// For 25 time intervals:
-	for (int i = 1; i <= NUM_DAYS; ++i) {
-		cout << "\n--- DAY " << i << " ---\n";
-		// Iterate through each clothing store.
-		for (const auto& store : clothingStores) {
-			bool somethingHappened = false;
-
-			cout << "At " << store.first << ":\n";
-
-			int probability;
-
-			// For a particular clothing store, these events have a chance of happening:
-		
-			// Event 1 (60% chance) - Clothing gets restocked.
-			probability = generateRandomNum(1, 100);
-			if (probability <= 60) {
-				restockClothing(clothingStores, store.first, clothingPool);
-				somethingHappened = true;
-			}
-
-			// Event 2 (80% cnance) - Clothing gets sold.
-			probability = generateRandomNum(1, 100);
-			if (probability <= 80) {
-				if (sellClothing(clothingStores, store.first)) {
-					somethingHappened = true;
-				}
-			}
-
-			// Event 3 (20% chance) - Clothing gets transferred between stores.
-			probability = generateRandomNum(1, 100);
-			if (probability <= 20) {
-				if (transferClothing(clothingStores, store.first)) {
-					somethingHappened = true;
-				}
-			}
-
-			if (!somethingHappened) {
-				cout << "Nothing happened.\n";
-			}
-
-			cout << "\n";
-		}
-		
-		// Display the stock at the end of the day.
-		displayStock(clothingStores);
-	}
-
-	return 0;
 }
