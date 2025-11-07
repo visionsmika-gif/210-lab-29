@@ -10,6 +10,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -207,6 +208,61 @@ void populateClothingPool(array<vector<Clothing>, NUM_CATEGORIES>& clothingPool,
 
 // Function to display the stock of all clothing stores.
 void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clothingStores) {
+	const int ROW_WIDTH = 30;
+	
+	// For every store,
+	for (const auto& store : clothingStores) {
+		cout << "[ STOCK REPORT for " << store.first << " ]\n";
+
+		// Print the categories header
+		for (int i = 0; i < NUM_CATEGORIES; ++i) {
+			cout << left << setw(ROW_WIDTH) << categoryNames[i];
+		}
+
+		// Find the category with the longest column
+		int greatestNumRows = 0;
+		for (int i = 0; i < NUM_CATEGORIES; ++i) {
+			const auto& category = store.second[i];
+
+			if (greatestNumRows < category.size()) {
+				greatestNumRows = category.size();
+			}
+		}
+
+		// Go through each row
+		for (int i = 0; i < greatestNumRows; ++i) {
+			// Go through each column
+			for (int j = 0; j < NUM_CATEGORIES; ++j) {
+				// Get the current category's list
+				const auto& category = store.second[j];
+
+				// Print the correct item in that list
+				// Print nothing if it's a blank cell
+			}
+		}
+
+
+		/*
+		// For every clothing category (tops, bottoms, shoes)
+		for (int i = 0; i < NUM_CATEGORIES; ++i) {
+			const auto& category = store.second[i];	// get list for current category
+			cout << ">> " << categoryNames[i] << ": ";
+			if (store.second[i].empty()) {
+				cout << "OUT OF STOCK\n";
+			}
+			else {
+				cout << "\n";
+				for (const auto& clothingPiece : category) {
+					cout << "\t- " << clothingPiece.name << "\n";
+				}
+			}
+		}
+		*/
+		cout << "\n";
+	}
+
+
+	/*
 	// For every store,
 	for (const auto& store : clothingStores) {
 		cout << "[ STOCK REPORT for " << store.first << " ]\n";
@@ -227,6 +283,7 @@ void displayStock(const map<string, array<list<Clothing>, NUM_CATEGORIES>>& clot
 		}
 		cout << "\n";
 	}
+	*/
 }
 
 // Function to add new clothing to a particular store.
